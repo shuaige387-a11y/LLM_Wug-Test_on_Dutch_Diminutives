@@ -28,6 +28,8 @@ pytest -q
 ```
 
 With the private files present, the coder reproduces the native-speaker results of the original
-study exactly (26 native speakers, 9 L2 learners, 175 trials; native accuracy among diminutive
-answers -je 19/19, -tje 16/16, -pje 15/20, -kje 14/20, -etje 7/19; 9 of 12 -etje errors follow
-the stem-final consonant). `tests/test_step1.py::test_reproduces_slides` checks this.
+study exactly (35 participants and 175 trials after exclusion: 26 native speakers, 8 L2 learners,
+and 1 Surinamese Dutch speaker who is analysed separately and not published; native accuracy among
+diminutive answers -je 19/19, -tje 16/16, -pje 15/20, -kje 14/20, -etje 7/19; 9 of 12 -etje errors
+follow the stem-final consonant). An answer like "kleine rengje" counts as a diminutive, and when an
+answer offers alternatives ("Renkje of Rengetje") the first one is coded. `tests/test_step1.py::test_reproduces_slides` checks this.

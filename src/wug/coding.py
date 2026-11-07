@@ -52,7 +52,15 @@ def code_answer(text: str, stem: str) -> Code:
     if text is None or str(text).strip() == "" or str(text).lower() == "nan":
         return Code("other")
     t, amb = first_answer(text)
-    if PERIPHRASIS.match(t):
+    m = PERIPHRASIS.match(t)
+    if m:
+        # "kleine rengje": a diminutive was still produced, so code the noun;
+        # otherwise it is a periphrasis with a bare or unrelated noun.
+        rest = t[m.end():].strip()
+        inner = code_answer(rest, stem) if rest else Code("other")
+        if inner.strategy in ("dim", "dialect"):
+            inner.ambiguous = inner.ambiguous or amb
+            return inner
         return Code("klein+N", word=t, ambiguous=amb)
     t = ARTICLES.sub("", t).strip()
     if not t:
