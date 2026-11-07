@@ -1,0 +1,12 @@
+model_key,hf_id,revision_sha,repo_last_modified_utc
+eurollm-1.7b,utter-project/EuroLLM-1.7B,c730cd9b616799ace3c65e927d63191446f59374,2024-11-27T13:00:19Z
+eurollm-1.7b-instruct,utter-project/EuroLLM-1.7B-Instruct,a25c7fa65fc2a644e6270b8940dbe295b51da681,2024-12-16T12:46:04Z
+eurollm-9b,utter-project/EuroLLM-9B-2512,3f5bacd0762eb45170985d6b699035f6a385ee3e,2026-07-31T17:22:51Z
+eurollm-9b-instruct,utter-project/EuroLLM-9B-Instruct-2512,def82454026b0353f12e48a0de081a9ed380d91e,2026-07-31T17:19:45Z
+gemma4-e2b,google/gemma-4-E2B,d29ff6b45f081a49ee2733a859c9c9c2d95d1a6f,2026-07-15T16:39:18Z
+gemma4-e2b-it,google/gemma-4-E2B-it,3e22461f65e89153144f8adb70e3b8c2cc9845a7,2026-07-20T16:41:56Z
+gemma4-e4b,google/gemma-4-E4B,11b8250ef59eb3ebc5dae7b21144d7b84f2c06dd,2026-11-03T16:10:47Z
+gemma4-e4b-it,google/gemma-4-E4B-it,4ecc2ba63bcac23ba4a767fc87025b1450f84c9c,2026-11-03T16:13:15Z
+gemma4-12b,google/gemma-4-12B,023679ed352de9bb66cc873c9009ce3482585c08,2026-07-15T16:40:57Z
+gemma4-12b-it,google/gemma-4-12B-it,43c9d014b231474fa7212dbb48a762566c2b255d,2026-10-30T15:47:58Z
+fietje-2,BramVanroy/fietje-2,9ca62700629e98d87f7eb54ffd286ac5454d09dc,2026-06-16T07:22:36Z
