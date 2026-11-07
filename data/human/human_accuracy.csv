@@ -1,0 +1,11 @@
+group,target,n_correct,n_dim
+L2,-je,4,4
+L2,-tje,3,3
+L2,-pje,3,4
+L2,-kje,3,5
+L2,-etje,0,3
+native,-je,19,19
+native,-tje,16,16
+native,-pje,15,20
+native,-kje,14,20
+native,-etje,7,19
