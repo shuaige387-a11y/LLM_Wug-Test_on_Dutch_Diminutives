@@ -98,9 +98,12 @@ def clear_cache(hf_id: str, enabled: bool) -> None:
     hub = Path(os.environ.get("HF_HUB_CACHE") or
                Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface")) / "hub")
     d = hub / f"models--{hf_id.replace('/', '--')}"
-    if d.exists():
-        shutil.rmtree(d)
-        print(f"cleared cache {d}")
+    # hf_xet keeps a separate chunk cache next to hub/ that can grow to tens of GB
+    xet = hub.parent / "xet"
+    for path in (d, xet):
+        if path.exists():
+            shutil.rmtree(path)
+            print(f"cleared cache {path}")
 
 
 if __name__ == "__main__":
