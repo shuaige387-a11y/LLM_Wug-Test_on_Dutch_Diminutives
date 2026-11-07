@@ -104,25 +104,41 @@ KLEIN_WORDS = {"klein", "kleine", "kleinere", "small", "smaller", "mini", "baby"
 DIM_ENDINGS = ("je", "ie", "ke")
 
 
+def _answer_text(text: str, stem: str) -> str:
+    """Keep the answer part of an output: the first non-empty line, minus echoed prompt text."""
+    lines = [ln.strip() for ln in str(text).splitlines()]
+    lines = [ln for ln in lines if ln and ln.lower().rstrip(":") not in ("antwoord", "answer")]
+    t = lines[0].lower() if lines else ""
+    t = re.sub(r"^antwoord\s*:\s*", "", t)
+    st = re.escape(stem)
+    # echoes of the prompt, not answers: "Dit is een tuif." (T2) and "van 'tuif'" (T4/T5)
+    t = re.sub(rf"\bdit is een {st}\s*[.!]", " ", t)
+    t = re.sub(rf"\bvan\s+['\"‘’“”]?{st}['\"‘’“”]?", " ", t)
+    return t
+
+
 def code_model_output(text: str, stem: str) -> Code:
     """Code a model's free-text output, which is often a whole sentence.
 
     Models answer with sentences such as "Het verkleinwoord van 'tuif' is 'tuifje'."
-    or "Object 4 is een tuif.", and often echo the stem from the question. The rule:
+    or "Object 4 is een tuif.", echo parts of the prompt, and base models keep writing
+    after the answer. The rule:
 
+    0. Keep only the first non-empty line and remove echoed prompt text
+       ("Dit is een tuif." and "van 'tuif'").
     1. Among the words built on the stem, take the first one that is not the bare
-       stem (so the echoed 'tuif' is skipped and 'tuifje' is coded). If an output
-       offers several different forms, the first is coded and the answer is flagged
-       ambiguous, as for the human data.
-    2. Otherwise, if the bare stem occurs, the answer is 'klein+N' when a word like
-       klein(e) stands right before it, and 'bare' if not.
-    3. Otherwise, a diminutive-looking word sharing the stem's first two letters is
-       'misread' (e.g. 'bakje' for bauk); anything else is 'other'.
+       stem and code it with the human rules. Several different forms: the first is
+       coded and the answer is flagged ambiguous, as for the human data.
+    2. A compound of mini/klein/baby with the stem ("minijin") is 'klein+N'.
+    3. A diminutive-looking word sharing the stem's first two letters is 'misread'
+       (e.g. 'bakje' for bauk, 'muisje' for muim).
+    4. Otherwise, if the bare stem occurs, the answer is 'klein+N' when a word like
+       klein(e) stands right before it, and 'bare' if not. Anything else is 'other'.
     """
     stem = stem.lower()
     if text is None or not str(text).strip():
         return Code("other")
-    words = WORD.findall(str(text).lower())
+    words = WORD.findall(_answer_text(text, stem))
     variants = _stem_variants(stem)
     built = [i for i, w in enumerate(words) if any(w.startswith(v) for v in variants)]
     derived = [i for i in built if words[i] != stem]
@@ -131,12 +147,15 @@ def code_model_output(text: str, stem: str) -> Code:
         c = code_answer(first, stem)
         c.ambiguous = len({words[i] for i in derived}) > 1
         return c
+    for w in words:
+        if w.endswith(stem) and w[: -len(stem)] in ("mini", "klein", "kleine", "baby"):
+            return Code("klein+N", word=w)
+    for w in words:
+        if w[:2] == stem[:2] and w.endswith(DIM_ENDINGS) and len(w) > len(stem):
+            return Code("misread", word=w)
     if built:
         i = built[0]
         if i > 0 and words[i - 1] in KLEIN_WORDS:
             return Code("klein+N", word=f"{words[i - 1]} {stem}")
         return Code("bare", word=stem)
-    for w in words:
-        if w[:2] == stem[:2] and w.endswith(DIM_ENDINGS) and len(w) > len(stem):
-            return Code("misread", word=w)
     return Code("other")

@@ -13,7 +13,7 @@ from wug.coding import code_model_output  # noqa: E402
 @pytest.mark.parametrize("output,stem,strategy,produced", [
     # pilot outputs
     ("Object 4 is een tuif.", "tuif", "bare", None),
-    ("Dit is een tuif.", "tuif", "bare", None),
+    ("Dit is een tuif.", "tuif", "other", None),  # T2: only the prompt sentence echoed
     ("Het kleine voorwerp is een tuif.", "tuif", "bare", None),
     ("Het verkleinwoord van 'tuif' is 'tuifje'.", "tuif", "dim", "-je"),
     ("Object 6 is een verkleinde versie van object 2.", "bauk", "other", None),
@@ -29,6 +29,15 @@ from wug.coding import code_model_output  # noqa: E402
     ("Een klein kemmetje", "kem", "dim", "-etje"),
     ("Het verkleinwoord van 'todding' is 'toddinkje'.", "todding", "dim", "-kje"),
     ("Ik zou het een jintje noemen.", "jin", "dim", "-tje"),
+    # full-run cases
+    ("Het verkleinwoord van 'muim' is 'muisje'.", "muim", "misread", None),
+    ("Het verkleinwoord van 'muim' is 'muim'.", "muim", "bare", None),
+    ("Dit is een muin. Dit is een heel klein **beest**.", "muin", "other", None),
+    ("een minijin", "jin", "klein+N", None),
+    ("Kleine reng", "reng", "klein+N", None),
+    ("duil\nboom → boompje\nduil → duiltje", "duil", "bare", None),  # base model rambling
+    ("muin. Dit is een heel klein muin. Dit is", "muin", "bare", None),
+    ("kempje\nkip → kipje", "kem", "dim", "-pje"),
 ])
 def test_extraction(output, stem, strategy, produced):
     c = code_model_output(output, stem)
