@@ -36,7 +36,8 @@ def test_spelling(stem, suffix, form):
     ("Rengeltje", "reng", "dim", "-eltje"), ("Baukie", "bauk", "dialect", "-ie"),
     ("Kleine duip", "duip", "klein+N", None), ("een duil", "duil", "bare", None),
     ("kerntje", "kem", "misread", None), ("Vlek", "duip", "other", None),
-    ("Renkje of Rengetje", "reng", "dim", "-kje"),
+    ("Renkje of Rengetje", "reng", "dim", "-kje"), ("kleine rengje", "reng", "dim", "-je"),
+    ("klein kem", "kem", "klein+N", None),
 ])
 def test_coder(answer, stem, strategy, produced):
     c = code_answer(answer, stem)
@@ -45,12 +46,15 @@ def test_coder(answer, stem, strategy, produced):
 
 @pytest.mark.skipif(not (RAW.exists() and EXCL.exists()), reason="private human data not present")
 def test_reproduces_slides():
-    """Slides 11-12 of the original presentation, native speakers."""
+    """Slides 10-13 of the original presentation."""
     t = human.code_trials(human.load_raw(RAW), human.load_exclusions(EXCL))
     kept = t[~t.excluded]
-    assert kept.groupby("group").participant.nunique().to_dict() == {"L2": 9, "native": 26}
+    assert kept.groupby("group").participant.nunique().to_dict() == {"L2": 8, "native": 26, "other_variety": 1}
     acc = human.accuracy_table(t)
     nat = acc[acc.group == "native"].set_index("target")
     assert nat.loc[["-je", "-tje", "-pje", "-kje", "-etje"], ["n_correct", "n_dim"]].values.tolist() == \
         [[19, 19], [16, 16], [15, 20], [14, 20], [7, 19]]
+    l2 = acc[acc.group == "L2"].set_index("target")
+    assert l2.loc[["-je", "-tje", "-pje", "-kje", "-etje"], ["n_correct", "n_dim"]].values.tolist() == \
+        [[4, 4], [3, 3], [3, 4], [3, 4], [0, 4]]
     assert human.consonant_following(t, "native") == dict(group="native", n_errors=12, n_follow=9)

@@ -32,17 +32,25 @@ def load_raw(path: str | Path) -> pd.DataFrame:
 def code_trials(raw: pd.DataFrame, exclusions: dict) -> pd.DataFrame:
     """Return one row per answered trial of every complete, non-preview response.
 
-    exclusions = {"excluded": [ResponseId, ...],      # off-task / joke responses
-                  "reclassify_as_L2": [ResponseId, ...]}  # self-reported fluent, analysed as L2
+    exclusions = {"excluded": [ResponseId, ...],          # off-task / joke responses
+                  "reclassify_as_L2": [ResponseId, ...],  # self-reported fluent, analysed as L2
+                  "other_variety": [ResponseId, ...]}     # e.g. Surinamese Dutch: own group,
+                                                          # left out of native and L2 comparisons
     """
     excluded = set(exclusions.get("excluded", []))
     as_l2 = set(exclusions.get("reclassify_as_L2", []))
+    variety = set(exclusions.get("other_variety", []))
     keep = raw[(raw["Status"] == "IP Address") & (raw["Finished"].astype(str) == "True")]
     rows = []
     for pid, (_, r) in enumerate(keep.iterrows(), start=1):
         rid = r["ResponseId"]
         fluent = str(r["Q2"]).startswith("Ja")
-        group = "native" if fluent and rid not in as_l2 else "L2"
+        if rid in variety:
+            group = "other_variety"
+        elif fluent and rid not in as_l2:
+            group = "native"
+        else:
+            group = "L2"
         for col, (stem, target) in ITEM_COLUMNS.items():
             ans = r.get(col)
             if pd.isna(ans):
@@ -96,6 +104,8 @@ def export_summaries(trials: pd.DataFrame, outdir: str | Path) -> list[Path]:
     """Write the aggregate tables that may be published."""
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
+    # A group of one person would publish that person's answers; keep it private.
+    trials = trials[trials.group.isin(["native", "L2"])]
     k = trials[~trials.excluded]
     n_part = k.groupby("group").participant.nunique().rename("n_participants").reset_index()
     files = {
