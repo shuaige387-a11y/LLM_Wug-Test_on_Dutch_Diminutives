@@ -1,0 +1,109 @@
+# Prompt templates for method A (generation) and method B (scoring).
+#
+# Placeholders: {stem}, {big}, {small} (object numbers, T1 only), {examples} (T5 only).
+# Every template has a `chat` form (instruct / API models; sent as one user turn,
+# no system prompt) and a `base` form (base models; plain text continued by the model).
+#
+# T1-T3 do not ask for a diminutive, so their strategy distribution can be compared
+# with the human data. T4-T5 ask for one explicitly and measure suffix choice only.
+
+answer_instruction:          # appended to chat prompts of T1, T3, T4 to keep answers short
+  formal: "Geef alleen uw antwoord."
+  informal: "Geef alleen je antwoord."
+
+templates:
+  T1_original:
+    description: Closest text version of the survey question; picture replaced by one sentence.
+    human_comparable: true
+    register: formal
+    chat: >-
+      Op een tekening staan zes genummerde voorwerpen. Object {big} is een {stem}.
+      Object {small} is net zo'n voorwerp als object {big}, maar veel kleiner.
+      Hoe zou u object {small} noemen?
+    base: >-
+      Op een tekening staan zes genummerde voorwerpen. Object {big} is een {stem}.
+      Object {small} is net zo'n voorwerp als object {big}, maar veel kleiner.
+      Hoe zou u object {small} noemen?
+
+      Antwoord:
+
+  T2_frame:
+    description: Frame sentence. Uninflected 'klein' after 'een' signals a neuter noun, which cues a diminutive.
+    human_comparable: true
+    register: none
+    chat: |-
+      Maak de volgende zin af met één woord:
+      Dit is een {stem}. Dit is een heel klein ...
+    base: "Dit is een {stem}. Dit is een heel klein"
+
+  T3_two_objects:
+    description: Big and small object described in words.
+    human_comparable: true
+    register: informal
+    chat: >-
+      Er liggen twee voorwerpen van dezelfde soort op tafel: een groot en een heel klein.
+      Het grote voorwerp is een {stem}. Hoe noem je het kleine voorwerp?
+    base: >-
+      Er liggen twee voorwerpen van dezelfde soort op tafel: een groot en een heel klein.
+      Het grote voorwerp is een {stem}. Hoe noem je het kleine voorwerp?
+
+      Antwoord:
+
+  T4_metalinguistic:
+    description: Explicit request for the diminutive; upper bound on suffix choice.
+    human_comparable: false
+    register: informal
+    chat: "Wat is het verkleinwoord van '{stem}'?"
+    base: |-
+      Wat is het verkleinwoord van '{stem}'?
+      Antwoord:
+
+  T5_fewshot:
+    description: Five real-word examples, one per allomorph, in item-specific random order.
+    human_comparable: false
+    register: none
+    chat: |-
+      Hier zijn enkele woorden met hun verkleinwoord:
+      {examples}
+      Wat is het verkleinwoord van '{stem}'? Antwoord met één woord.
+    base: |-
+      Woord → verkleinwoord
+      {examples}
+      {stem} →
+
+# Real words for T5, one per allomorph. None is a Wuggy template or a real-word baseline item.
+fewshot_examples:
+  - [huis, huisje]
+  - [laan, laantje]
+  - [bloem, bloempje]
+  - [tekening, tekeninkje]
+  - [bal, balletje]
+
+# Method B: the five candidate forms are scored as the continuation of `prefix`.
+# The continuation includes the final period so the word boundary is scored too.
+scoring:
+  frame:
+    prefix: "Dit is een {stem}. Dit is een heel klein"
+    continuation: " {candidate}."
+  neutral:   # calibration context: prior of the candidate string without the frame
+    prefix: "Het woord is"
+    continuation: " {candidate}."
+
+# Object numbers used in the original survey (big -> small), for T1 with the core words.
+# Reserve and real words use 1 -> 4.
+survey_objects:
+  tuif: [1, 4]
+  duip: [3, 5]
+  bauk: [2, 6]
+  joer: [2, 4]
+  muin: [3, 5]
+  duil: [1, 6]
+  kuim: [2, 4]
+  muim: [1, 5]
+  loem: [3, 6]
+  todding: [1, 6]
+  biening: [2, 5]
+  mozing: [3, 4]
+  jin: [1, 6]
+  kem: [2, 5]
+  reng: [3, 4]

@@ -1,0 +1,11 @@
+{
+  "seed": 20261107,
+  "templates_sha256": "83758b62c19ef6249e2eac66433d776e4ea54ec1f72bf91a24afe0971cb16da4",
+  "n_items": {
+    "nonce_reserve": 51,
+    "nonce_core": 15,
+    "real": 20
+  },
+  "n_generation_prompts": 430,
+  "n_scoring_items": 860
+}
