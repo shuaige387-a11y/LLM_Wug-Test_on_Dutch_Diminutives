@@ -19,6 +19,11 @@ data/stimuli/real_words.csv    20 real-word baseline items (Wuggy templates, 4 p
 prompts/                       generated prompts + MANIFEST.json (step 2)
 scripts/01_load_data.py        step 1
 scripts/02_build_prompts.py    step 2
+config/models.yaml             open models, decoding settings, seed
+src/wug/hf_runner.py           4-bit loading, generation (method A), log-prob scoring (method B)
+scripts/03_run_hf.py           step 3, one model and method per call; resumable
+notebooks/03_run_models_colab.ipynb   step 3 on a free Colab T4
+outputs/raw/<model>/           raw model outputs + run metadata
 tests/                         pytest checks
 ```
 
@@ -68,3 +73,31 @@ Sizes: 86 items (15 core + 51 reserve nonce words, 20 real words) x 5 templates 
 prompts; 86 x 5 candidates x 2 contexts = 860 scoring items. Planned API budget per model:
 15 core words x 5 templates x (1 greedy + 10 samples) = 825 calls, plus 20 real words x 5 templates
 greedy only = 100 calls.
+
+## Step 3: run the open models
+
+Open `notebooks/03_run_models_colab.ipynb` in Colab (T4 GPU) and run it top to bottom, or call the
+script directly:
+
+```bash
+pip install -r requirements-gpu.txt
+python scripts/03_run_hf.py --model eurollm-1.7b --method B --limit 3   # dry run on 3 words
+python scripts/03_run_hf.py --model eurollm-1.7b --method B             # 15 core + 20 real words
+python scripts/03_run_hf.py --model eurollm-1.7b --method B --words all # + 51 reserve words
+```
+
+- **Models** (`config/models.yaml`): EuroLLM 1.7B and 9B, Gemma 4 E2B, E4B and 12B, fietje-2.
+  Method B (scoring) runs on the base models. Method A (generation) runs on the instruct models,
+  plus EuroLLM-1.7B base and fietje-2 as base-model checks. All are loaded in 4-bit NF4, so size
+  is not confounded with quantization.
+- **Decoding** for method A: 1 greedy output plus 10 samples at temperature 0.7, 24 new tokens at
+  most. The sampling seed is derived from the global seed and the prompt id, so a rerun on the
+  same hardware and library versions gives the same samples. GPU kernels are not guaranteed to be
+  bit-identical across hardware.
+- **Scoring** for method B: the full string (prefix + candidate + ".") is tokenized once, and the
+  candidate's tokens are found by character offsets. The output keeps the total log-probability,
+  the per-token mean, the tokens themselves and a flag for a token that crosses the boundary.
+  `tests/test_step3.py` checks the result against log P(prefix + continuation) − log P(prefix) on
+  a tiny local model.
+- **Metadata**: every run writes `<method>_meta.json` with the model's commit hash, the UTC time,
+  library versions, the GPU and the decoding settings.

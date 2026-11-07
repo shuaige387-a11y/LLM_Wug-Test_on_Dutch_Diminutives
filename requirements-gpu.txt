@@ -1,0 +1,6 @@
+# For the model runs on Colab (torch is preinstalled there). Exact versions are written
+# to outputs/raw/<model>/<method>_meta.json at run time.
+-r requirements.txt
+transformers>=4.57
+accelerate>=1.0
+bitsandbytes>=0.45

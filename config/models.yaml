@@ -1,0 +1,93 @@
+# Models for the main runs. Repo ids were checked on Hugging Face on 2026-11-07.
+# Every open model is loaded in 4-bit NF4 (fp16 compute) so that model size is not
+# confounded with quantization. The exact revision (commit hash) is recorded at run time.
+#
+# methods: A = generation (method A), B = log-probability scoring (method B).
+# Method B runs on base models only; method A runs on instruct models, plus one base
+# model (EuroLLM-1.7B) as a base-vs-instruct check.
+#
+# chat_template_kwargs is passed to tokenizer.apply_chat_template.
+
+defaults:
+  quantization: 4bit
+  max_new_tokens: 24
+  greedy: true
+  n_samples: 10
+  temperature: 0.7
+  top_p: 1.0
+  seed: 20261107
+
+models:
+  # ---- EuroLLM: Dutch explicitly in the training languages ----
+  eurollm-1.7b:
+    hf_id: utter-project/EuroLLM-1.7B
+    kind: base
+    family: EuroLLM
+    params_b: 1.7
+    methods: [A, B]
+  eurollm-1.7b-instruct:
+    hf_id: utter-project/EuroLLM-1.7B-Instruct
+    kind: instruct
+    family: EuroLLM
+    params_b: 1.7
+    methods: [A]
+  eurollm-9b:
+    hf_id: utter-project/EuroLLM-9B-2512
+    kind: base
+    family: EuroLLM
+    params_b: 9
+    methods: [B]
+  eurollm-9b-instruct:
+    hf_id: utter-project/EuroLLM-9B-Instruct-2512
+    kind: instruct
+    family: EuroLLM
+    params_b: 9
+    methods: [A]
+
+  # ---- Gemma 4: three sizes (E-models: effective params; with embeddings in brackets) ----
+  gemma4-e2b:
+    hf_id: google/gemma-4-E2B
+    kind: base
+    family: Gemma4
+    params_b: 2.3      # 5.1 with embeddings
+    methods: [B]
+  gemma4-e2b-it:
+    hf_id: google/gemma-4-E2B-it
+    kind: instruct
+    family: Gemma4
+    params_b: 2.3
+    methods: [A]
+  gemma4-e4b:
+    hf_id: google/gemma-4-E4B
+    kind: base
+    family: Gemma4
+    params_b: 4.5      # 8 with embeddings
+    methods: [B]
+  gemma4-e4b-it:
+    hf_id: google/gemma-4-E4B-it
+    kind: instruct
+    family: Gemma4
+    params_b: 4.5
+    methods: [A]
+  gemma4-12b:
+    hf_id: google/gemma-4-12B
+    kind: base
+    family: Gemma4
+    params_b: 12
+    methods: [B]
+  gemma4-12b-it:
+    hf_id: google/gemma-4-12B-it
+    kind: instruct
+    family: Gemma4
+    params_b: 12
+    methods: [A]
+
+  # ---- Dutch-specific ----
+  fietje-2:
+    hf_id: BramVanroy/fietje-2
+    kind: base
+    family: Fietje
+    params_b: 2.7
+    methods: [A, B]   # no instruct version in the lineup; generation uses the base prompts
+
+# API models (method A only) are added once chosen; see config/api_models.yaml.
