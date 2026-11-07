@@ -95,3 +95,48 @@ def consonant_suffix(stem: str) -> str | None:
     if stem.endswith("ng"):
         return CONSONANT_SUFFIX["ng"]
     return CONSONANT_SUFFIX.get(stem[-1])
+
+
+# ------------------------------------------------------------ model outputs
+
+WORD = re.compile(r"[a-zà-ÿ]+")
+KLEIN_WORDS = {"klein", "kleine", "kleinere", "small", "smaller", "mini", "baby"}
+DIM_ENDINGS = ("je", "ie", "ke")
+
+
+def code_model_output(text: str, stem: str) -> Code:
+    """Code a model's free-text output, which is often a whole sentence.
+
+    Models answer with sentences such as "Het verkleinwoord van 'tuif' is 'tuifje'."
+    or "Object 4 is een tuif.", and often echo the stem from the question. The rule:
+
+    1. Among the words built on the stem, take the first one that is not the bare
+       stem (so the echoed 'tuif' is skipped and 'tuifje' is coded). If an output
+       offers several different forms, the first is coded and the answer is flagged
+       ambiguous, as for the human data.
+    2. Otherwise, if the bare stem occurs, the answer is 'klein+N' when a word like
+       klein(e) stands right before it, and 'bare' if not.
+    3. Otherwise, a diminutive-looking word sharing the stem's first two letters is
+       'misread' (e.g. 'bakje' for bauk); anything else is 'other'.
+    """
+    stem = stem.lower()
+    if text is None or not str(text).strip():
+        return Code("other")
+    words = WORD.findall(str(text).lower())
+    variants = _stem_variants(stem)
+    built = [i for i, w in enumerate(words) if any(w.startswith(v) for v in variants)]
+    derived = [i for i in built if words[i] != stem]
+    if derived:
+        first = words[derived[0]]
+        c = code_answer(first, stem)
+        c.ambiguous = len({words[i] for i in derived}) > 1
+        return c
+    if built:
+        i = built[0]
+        if i > 0 and words[i - 1] in KLEIN_WORDS:
+            return Code("klein+N", word=f"{words[i - 1]} {stem}")
+        return Code("bare", word=stem)
+    for w in words:
+        if w[:2] == stem[:2] and w.endswith(DIM_ENDINGS) and len(w) > len(stem):
+            return Code("misread", word=w)
+    return Code("other")

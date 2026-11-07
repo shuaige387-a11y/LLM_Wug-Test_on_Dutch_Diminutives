@@ -24,6 +24,8 @@ src/wug/hf_runner.py           4-bit loading, generation (method A), log-prob sc
 scripts/03_run_hf.py           step 3, one model and method per call; resumable
 notebooks/03_run_models_colab.ipynb   step 3 on a free Colab T4
 outputs/raw/<model>/           raw model outputs + run metadata
+scripts/04_code_outputs.py     step 4: code model outputs, manual-check sample, agreement
+outputs/coded/                 coded model outputs (step 4)
 tests/                         pytest checks
 ```
 
@@ -101,3 +103,20 @@ python scripts/03_run_hf.py --model eurollm-1.7b --method B --words all # + 51 r
   a tiny local model.
 - **Metadata**: every run writes `<method>_meta.json` with the model's commit hash, the UTC time,
   library versions, the GPU and the decoding settings.
+
+## Step 4: code the model outputs
+
+```bash
+python scripts/04_code_outputs.py --sample 200      # code everything + draw a manual-check sample
+# fill in manual_strategy / manual_produced in outputs/coded/manual_check.csv, then:
+python scripts/04_code_outputs.py --agreement outputs/coded/manual_check.csv
+```
+
+Models often answer with a sentence ("Het verkleinwoord van 'tuif' is 'tuifje'.", "Object 4 is
+een tuif.") and echo the stem from the question. `code_model_output` in `src/wug/coding.py` takes
+the first word built on the stem that is not the bare stem, and codes it with the same rules as the
+human answers. If there is none, the answer is bare (or klein + noun when *klein(e)* stands right
+before the stem). A diminutive-looking word with the stem's first two letters is a misread (e.g.
+*bakje* for *bauk*), and anything else is "other". The manual-check sample is stratified by model
+and strategy, so rare codes get checked too. The test cases in `tests/test_step4.py` come from the
+Colab pilot run.
