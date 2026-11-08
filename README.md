@@ -72,9 +72,8 @@ Method B scores each of the five candidate forms as the continuation of
 boundary is scored), and again after the neutral prefix "Het woord is" for calibration.
 
 Sizes: 86 items (15 core + 51 reserve nonce words, 20 real words) x 5 templates = 430 generation
-prompts; 86 x 5 candidates x 2 contexts = 860 scoring items. Planned API budget per model:
-15 core words x 5 templates x (1 greedy + 10 samples) = 825 calls, plus 20 real words x 5 templates
-greedy only = 100 calls.
+prompts; 86 x 5 candidates x 2 contexts = 860 scoring items. API model: 35 core items (15 nonce + 20 real words)
+x 5 templates x 11 calls = 1,925 calls (see step 3b).
 
 ## Step 3: run the open models
 
@@ -103,6 +102,23 @@ python scripts/03_run_hf.py --model eurollm-1.7b --method B --words all # + 51 r
   a tiny local model.
 - **Metadata**: every run writes `<method>_meta.json` with the model's commit hash, the UTC time,
   library versions, the GPU and the decoding settings.
+
+## Step 3b: run the API model
+
+One API model, Claude Sonnet 5.5 (`config/api_models.yaml`), runs method A only, since closed
+models do not expose the log-probabilities that method B needs. Current Claude models do not accept
+`temperature` or `top_p`, so a greedy run and T = 0.7 sampling are not possible. Each prompt is
+sent 11 times at the model's default sampling instead, which gives the same number of outputs per
+prompt as the open models, and is recorded as `decoding = "default"`. Extended thinking is
+switched off (the model's lowest thinking setting), so that the model answers directly like the
+open models and the participants. The model id, SDK version and run date are written to
+`outputs/raw/claude-sonnet-5-5/A_meta.json`.
+
+```bash
+export ANTHROPIC_API_KEY=...        # or Colab Secrets, see notebooks/03b_run_api_colab.ipynb
+python scripts/03b_run_api.py --model claude-sonnet-5-5 --limit 1 --calls 1   # dry run, 5 calls
+python scripts/03b_run_api.py --model claude-sonnet-5-5                       # 1,925 calls
+```
 
 ## Step 4: code the model outputs
 
