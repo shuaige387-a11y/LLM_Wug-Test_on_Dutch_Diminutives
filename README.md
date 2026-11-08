@@ -116,7 +116,16 @@ Models often answer with a sentence ("Het verkleinwoord van 'tuif' is 'tuifje'."
 een tuif.") and echo the stem from the question. `code_model_output` in `src/wug/coding.py` takes
 the first word built on the stem that is not the bare stem, and codes it with the same rules as the
 human answers. If there is none, the answer is bare (or klein + noun when *klein(e)* stands right
-before the stem). A diminutive-looking word with the stem's first two letters is a misread (e.g.
-*bakje* for *bauk*), and anything else is "other". The manual-check sample is stratified by model
-and strategy, so rare codes get checked too. The test cases in `tests/test_step4.py` come from the
+before the stem). *Klein* + an unrelated noun (*een klein kind*) is "other". A word counts as a
+misread only if, without its diminutive ending, it is at most two edits from the stem (*kemp* for
+*kem*, *hariksje* for *haring*); anything further away (*haantje*, *ruitje*) is "other". The
+manual-check sample is stratified by model and strategy, so rare codes get checked too.
+
+Manual check (210 rows, coded blind by the first author). Before the coder was revised, strategy
+agreement was 86.7% (Cohen's kappa .84). After the two rules above were added it is 91.0% (kappa
+.89). The 23 remaining disagreements were then settled row by row
+(`outputs/coded/manual_check_adjudicated.csv`, column `adj_note`). Most were manual slips, such as
+*riemje* coded as -pje. Against the settled codes the coder agrees on 209 of 210 rows (99.5%).
+That figure is optimistic, because the rules were revised on this same sample.
+The test cases in `tests/test_step4.py` come from the
 Colab pilot run.
