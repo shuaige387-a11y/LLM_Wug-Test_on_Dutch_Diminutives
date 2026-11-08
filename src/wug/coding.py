@@ -100,8 +100,28 @@ def consonant_suffix(stem: str) -> str | None:
 # ------------------------------------------------------------ model outputs
 
 WORD = re.compile(r"[a-zà-ÿ]+")
-KLEIN_WORDS = {"klein", "kleine", "kleinere", "small", "smaller", "mini", "baby"}
-DIM_ENDINGS = ("je", "ie", "ke")
+KLEIN_WORDS = {"klein", "kleine", "kleinere", "kleiner", "small", "smaller", "mini", "baby",
+               "miniem", "mini", "miniemere", "piepklein", "piepkleine", "minuscule", "minuscuul"}
+KLEIN_PREFIXES = ("mini", "klein", "kleine", "baby", "piepklein")
+DIM_ENDINGS = ("tje", "pje", "kje", "je", "ie", "ke")
+ARTICLE = r"(?:een|de|het)"
+
+
+def _edit_distance(a: str, b: str) -> int:
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1]
+
+
+def _strip_dim(w: str) -> str:
+    for e in ("etje", "tje", "pje", "kje", "je", "ie", "ke"):
+        if w.endswith(e) and len(w) > len(e) + 1:
+            return w[: -len(e)]
+    return w
 
 
 def _answer_text(text: str, stem: str) -> str:
@@ -109,53 +129,76 @@ def _answer_text(text: str, stem: str) -> str:
     lines = [ln.strip() for ln in str(text).splitlines()]
     lines = [ln for ln in lines if ln and ln.lower().rstrip(":") not in ("antwoord", "answer")]
     t = lines[0].lower() if lines else ""
+    t = t.replace("*", "")
     t = re.sub(r"^antwoord\s*:\s*", "", t)
     st = re.escape(stem)
-    # echoes of the prompt, not answers: "Dit is een tuif." (T2) and "van 'tuif'" (T4/T5)
-    t = re.sub(rf"\bdit is een {st}\s*[.!]", " ", t)
-    t = re.sub(rf"\bvan\s+['\"‘’“”]?{st}['\"‘’“”]?", " ", t)
+    # echoes of the prompt, not answers
+    t = re.sub(rf"\bdit is een {st}\s*[.!]", " ", t)                       # T2
+    t = re.sub(rf"\bvan\s+['\"‘’“”]?{st}['\"‘’“”]?", " ", t)              # T4/T5
+    if re.search(r"op (een|de) tekening staan zes genummerde voorwerpen", t):  # T1 restated
+        t = re.sub(r"op (een|de) tekening staan zes genummerde voorwerpen\.?", " ", t)
+        t = re.sub(rf"object \d+ is een {st}\s*[.!]?", " ", t, count=1)
+    t = re.sub(r"het grote voorwerp is een \w+\s*[.!]?", " ", t)           # T3 restated
     return t
+
+
+def _is_bare_answer(t: str, stem: str) -> bool:
+    """The bare stem is given as the answer, not just mentioned somewhere in a sentence."""
+    st = re.escape(stem)
+    q = r"['\"‘’“”]?"
+    if re.match(rf"^\W*(?:{ARTICLE}\s+)?{q}{st}{q}\W*(?:[.!?,;:]|$)", t):  # the answer is the stem
+        return True
+    return bool(re.search(rf"\b(?:is|heet|heten|noem\w*|wordt)\s*:?\s+(?:{ARTICLE}\s+)?{q}{st}{q}(?:\W|$)", t))
 
 
 def code_model_output(text: str, stem: str) -> Code:
     """Code a model's free-text output, which is often a whole sentence.
 
-    Models answer with sentences such as "Het verkleinwoord van 'tuif' is 'tuifje'."
-    or "Object 4 is een tuif.", echo parts of the prompt, and base models keep writing
-    after the answer. The rule:
-
-    0. Keep only the first non-empty line and remove echoed prompt text
-       ("Dit is een tuif." and "van 'tuif'").
-    1. Among the words built on the stem, take the first one that is not the bare
-       stem and code it with the human rules. Several different forms: the first is
-       coded and the answer is flagged ambiguous, as for the human data.
-    2. A compound of mini/klein/baby with the stem ("minijin") is 'klein+N'.
-    3. A diminutive-looking word sharing the stem's first two letters is 'misread'
-       (e.g. 'bakje' for bauk, 'muisje' for muim).
-    4. Otherwise, if the bare stem occurs, the answer is 'klein+N' when a word like
-       klein(e) stands right before it, and 'bare' if not. Anything else is 'other'.
+    0. Keep the first non-empty line; drop echoed prompt text ("Dit is een tuif.",
+       "van 'tuif'", a restated T1/T3 question).
+    1. The first word built on the stem that is not the bare stem is coded with the
+       human rules (several different forms: first one, flagged ambiguous).
+    2. The bare stem given as the answer ("tuif", "een tuif", "Object 4 is een tuif",
+       "Het antwoord is: 'tuif'") is 'bare'; preceded by klein(e)/mini/miniemere it is
+       'klein+N'; a mini-/klein- compound ("minijin") is also 'klein+N'.
+    3. A form of a different but similar stem (edit distance <= 2 after removing a
+       diminutive ending, e.g. 'bakje' for bauk, 'muisje' or 'muis' for muim) is 'misread'.
+    4. Anything else, including a stem that is only mentioned inside a longer sentence
+       ("stukje van de tuin") or klein + an unrelated noun ("klein kind"), is 'other'.
     """
     stem = stem.lower()
     if text is None or not str(text).strip():
         return Code("other")
-    words = WORD.findall(_answer_text(text, stem))
+    t = _answer_text(text, stem)
+    words = WORD.findall(t)
     variants = _stem_variants(stem)
     built = [i for i, w in enumerate(words) if any(w.startswith(v) for v in variants)]
     derived = [i for i in built if words[i] != stem]
     if derived:
         first = words[derived[0]]
         c = code_answer(first, stem)
-        c.ambiguous = len({words[i] for i in derived}) > 1
-        return c
+        if c.strategy in ("dim", "dialect"):
+            c.ambiguous = len({words[i] for i in derived}) > 1
+            return c
     for w in words:
-        if w.endswith(stem) and w[: -len(stem)] in ("mini", "klein", "kleine", "baby"):
+        if w.endswith(stem) and w[: -len(stem)] in KLEIN_PREFIXES:
             return Code("klein+N", word=w)
-    for w in words:
-        if w[:2] == stem[:2] and w.endswith(DIM_ENDINGS) and len(w) > len(stem):
-            return Code("misread", word=w)
     if built:
+        if re.match(rf"^\W*{re.escape(stem)}\W*(?:[.!?,;:]|$)", t):  # base model filled the blank
+            return Code("bare", word=stem)
         i = built[0]
         if i > 0 and words[i - 1] in KLEIN_WORDS:
             return Code("klein+N", word=f"{words[i - 1]} {stem}")
-        return Code("bare", word=stem)
+        if _is_bare_answer(t, stem):
+            return Code("bare", word=stem)
+    content = [w for w in words if w not in ("een", "de", "het") and w not in KLEIN_WORDS]
+    for w in content:
+        if w == stem or len(w) < 3:
+            continue
+        core = _strip_dim(w)
+        looks_dim = core != w
+        if w[0] == stem[0] or core[:2] == stem[:2]:
+            if (looks_dim and _edit_distance(core, stem) <= 2) or \
+               (not looks_dim and len(content) <= 2 and _edit_distance(w, stem) == 1):
+                return Code("misread", word=w)
     return Code("other")

@@ -1,0 +1,339 @@
+check_id,model,prompt_id,decoding,sample_index,stem,condition,output,strategy,produced,manual_strategy,manual_produced,note
+C001,gemma4-e2b-it,nonce:jin:T2_frame,sample,7,jin,-etje,Dit is een jin. Dit is een heel klein **beest**.,other,,other,,
+C002,eurollm-9b-instruct,nonce:kuim:T4_metalinguistic,sample,10,kuim,-pje,kuimpje,dim,-pje,dim,-pje,
+C003,eurollm-1.7b-instruct,nonce:kem:T3_two_objects,sample,9,kem,-etje,Klein kem.,klein+N,,klein+N,,
+C004,eurollm-1.7b,real:koning:T3_two_objects,sample,3,koning,-kje,"Een klein kind.
+Er zijn kinderen en volwassenen. Er zijn kinderen van 3 jaar en kinderen van 6",other,,klein+N,,
+C005,gemma4-e2b-it,nonce:kuim:T4_metalinguistic,sample,10,kuim,-pje,kiem,other,,other,,
+C006,eurollm-1.7b,real:haring:T5_fewshot,sample,6,haring,-kje,"hariksje
+eekhoorn → eekhoortje
+konijn → konijntje
+muis",misread,,other,,
+C007,eurollm-1.7b,nonce:loem:T5_fewshot,sample,7,loem,-pje,"loem
+dwarsk → dwarsvorkje
+kruimel → kruimeltje
+kussentje",bare,,bare,,
+C008,eurollm-9b-instruct,real:deur:T2_frame,sample,10,deur,-tje,Deur. Dit is een heel klein huis.,bare,,bare,,
+C009,gemma4-e4b-it,nonce:bauk:T3_two_objects,sample,9,bauk,-je,bouwsteen,other,,other,,
+C010,eurollm-1.7b-instruct,nonce:muin:T5_fewshot,sample,8,muin,-tje,muisje,misread,,misread,,
+C011,eurollm-1.7b,nonce:reng:T3_two_objects,sample,5,reng,-etje,"Een ragout.
+Er is een ragout op tafel. Hoe noem je die?
+Antwoord",other,,other,,
+C012,eurollm-1.7b-instruct,real:deur:T5_fewshot,sample,4,deur,-tje,Enkel 'deurje'.,dim,-je,dim,-je,
+C013,fietje-2,real:tuin:T2_frame,sample,10,tuin,-tje, stukje van de tuin. In het midden is een kruidentuin. Daar is,other,,other,,
+C014,gemma4-12b-it,nonce:jin:T5_fewshot,sample,5,jin,-etje,jintje,dim,-tje,dim,-eltje,
+C015,eurollm-1.7b-instruct,real:deur:T4_metalinguistic,sample,4,deur,-tje,Het verkleinwoord van 'deur' is 'deur'.,bare,,bare,,
+C016,gemma4-e4b-it,real:kip:T3_two_objects,sample,8,kip,-je,een kippenkiezel,other,,other,,
+C017,gemma4-12b-it,real:deur:T2_frame,sample,6,deur,-tje,voorbeeld: **deurtje**,dim,-tje,dim,-tje,
+C018,eurollm-9b-instruct,nonce:muin:T4_metalinguistic,sample,9,muin,-tje,muintje,dim,-tje,dim,-tje,
+C019,eurollm-1.7b,nonce:bauk:T4_metalinguistic,sample,10,bauk,-je,"[buk]
+Wat is het verkleinwoord van 'buk'?
+Buk is een verklein",misread,,other,,
+C020,eurollm-1.7b,real:boer:T4_metalinguistic,sample,5,boer,-tje,"'boerke'
+Wat is het verkleinwoord van 'boer'?
+Wat is het verklein",dialect,-ie,other,,
+C021,gemma4-12b-it,real:duif:T4_metalinguistic,sample,7,duif,-je,duifje,dim,-je,dim,-je,
+C022,gemma4-12b-it,real:haring:T5_fewshot,sample,4,haring,-kje,haringtje,dim,-tje,dim,-tje,
+C023,fietje-2,real:zeil:T2_frame,sample,4,zeil,-tje," stukje van de wereld. De weg naar buiten.
+Daar is de zee",other,,other,,
+C024,fietje-2,real:haring:T2_frame,sample,9,haring,-kje," gevaarte, maar het is een haring. Als we ze uit de mond van",bare,,other,,
+C025,gemma4-e2b-it,real:duim:T4_metalinguistic,greedy,0,duim,-pje,duimletje,misread,,other,,
+C026,eurollm-9b-instruct,nonce:todding:T2_frame,sample,4,todding,-kje,Dit is een todding. Dit is een heel klein **dopje**.,other,,klein+N,,
+C027,gemma4-e2b-it,real:duim:T5_fewshot,sample,8,duim,-pje,duim,bare,,bare,,
+C028,gemma4-e4b-it,real:deur:T1_original,sample,1,deur,-tje,een deurknop,other,,other,,
+C029,gemma4-e4b-it,nonce:jin:T1_original,sample,1,jin,-etje,een jinnetje,dim,-etje,dim,-etje,
+C030,gemma4-e4b-it,nonce:muim:T2_frame,sample,7,muim,-pje,Dit is een muim. Dit is een heel klein **beest**.,other,,other,,
+C031,gemma4-12b-it,real:duif:T2_frame,sample,3,duif,-je,... **poppetje**.,other,,other,,use diminutive form but change the stem as well
+C032,gemma4-12b-it,real:duif:T3_two_objects,sample,4,duif,-je,Een kleine duif.,klein+N,,klein+N,,
+C033,gemma4-12b-it,real:haring:T1_original,sample,5,haring,-kje,Een kleine haring.,klein+N,,klein+N,,
+C034,gemma4-12b-it,nonce:todding:T1_original,sample,1,todding,-kje,Een minitodding,klein+N,,klein+N,,"""mini"" functions as ""klein"""
+C035,eurollm-1.7b,nonce:tuif:T4_metalinguistic,sample,2,tuif,-je,"De verkleinwoorden van 'tuif' is 'tuiffen'.
+De verkleinwoorden van 'tuif",other,,other,,
+C036,eurollm-9b-instruct,real:tuin:T3_two_objects,sample,1,tuin,-tje,"Een **tuin** is een groot voorwerp, maar het kleine voorwerp dat erop ligt, is een **tu",other,,other,,
+C037,gemma4-12b-it,real:riem:T4_metalinguistic,sample,9,riem,-pje,riempje,dim,-pje,dim,-pje,
+C038,eurollm-1.7b-instruct,real:boek:T3_two_objects,sample,2,boek,-je,kleinboek,klein+N,,klein+N,,
+C039,gemma4-12b-it,nonce:tuif:T2_frame,sample,4,tuif,-je,... **mens**.,other,,other,,
+C040,fietje-2,real:riem:T5_fewshot,sample,5,riem,-pje," riemtje
+krukje → krukje
+stropdas → stropdas",dim,-tje,dim,-tje,
+C041,eurollm-1.7b,real:raam:T3_two_objects,sample,5,raam,-pje,"een ruitje.
+Welke van de volgende woorden is juist?
+Deze zin klopte niet:",other,,misread,,
+C042,gemma4-12b-it,real:riem:T3_two_objects,sample,9,riem,-pje,Een kleine riem.,klein+N,,klein+N,,
+C043,gemma4-12b-it,nonce:bauk:T1_original,sample,10,bauk,-je,Een kleine bauk,klein+N,,klein+N,,
+C044,eurollm-9b-instruct,real:boer:T1_original,sample,8,boer,-tje,Boertje,dim,-tje,dim,-tje,
+C045,eurollm-9b-instruct,real:deur:T3_two_objects,sample,1,deur,-tje,klink,other,,other,,
+C046,gemma4-e4b-it,real:riem:T4_metalinguistic,sample,4,riem,-pje,riemje,dim,-je,dim,-pje,
+C047,gemma4-e4b-it,real:kam:T4_metalinguistic,sample,7,kam,-etje,kammetje,dim,-etje,dim,-etje,
+C048,eurollm-9b-instruct,real:duim:T4_metalinguistic,sample,9,duim,-pje,duimpje,dim,-pje,dim,-pje,
+C049,eurollm-1.7b,real:kip:T5_fewshot,sample,9,kip,-je,"kikkertje
+kip → kipje
+kip → kipje
+kip → kuikentje
+",other,,dim,-je,Gave multiple answers
+C050,gemma4-12b-it,nonce:duip:T2_frame,sample,4,duip,-je,**duifje**,misread,,misread,,
+C051,fietje-2,real:kam:T2_frame,sample,10,kam,-etje," stukje van een heel groot verhaal.
+Als je op een dag op de site",other,,other,,
+C052,gemma4-e2b-it,real:ketting:T5_fewshot,sample,6,ketting,-kje,kettingje,dim,-je,dim,-je,
+C053,gemma4-e2b-it,nonce:kem:T4_metalinguistic,sample,8,kem,-etje,kemp,misread,,bare,,
+C054,eurollm-9b-instruct,real:boom:T3_two_objects,sample,6,boom,-pje,"Het kleine voorwerp heet een **bezem**.  
+
+(Een boom is een groot voorwerp, dus",other,,other,,
+C055,eurollm-1.7b,real:kam:T2_frame,greedy,0,kam,-etje,stukje van de kam. Dit is een heel klein stukje van de kam. Dit is een heel klein stukje van de kam,other,,other,,
+C056,fietje-2,nonce:muim:T2_frame,sample,3,muim,-pje, muisje. Hij heet Minnie Mouse. En hij is de hele dag aan het d,misread,,misread,,
+C057,gemma4-e4b-it,nonce:mozing:T1_original,sample,1,mozing,-kje,een mozing,bare,,bare,,
+C058,eurollm-1.7b-instruct,nonce:biening:T1_original,sample,8,biening,-kje,Het antwoord is het antwoord op de vraag: 5 is een veel kleiner voorwerp dan object 2.,other,,klein+N,,
+C059,gemma4-e2b-it,nonce:kuim:T1_original,sample,6,kuim,-pje,Kleine kuim,klein+N,,klein+N,,
+C060,gemma4-12b-it,real:pen:T2_frame,sample,3,pen,-etje,**ding.**,other,,other,,
+C061,fietje-2,real:ketting:T2_frame,sample,7,ketting,-kje, deel van de ketting. De ketting zelf is zo groot als een echte ket,other,,other,,
+C062,fietje-2,nonce:biening:T5_fewshot,sample,2,biening,-kje," bijnaing
+bijnaing → bijnaing
+bijnaing → bijnaing",other,,other,,
+C063,eurollm-9b-instruct,nonce:muin:T3_two_objects,greedy,0,muin,-tje,muis,misread,,misread,,
+C064,gemma4-e4b-it,nonce:kem:T2_frame,sample,1,kem,-etje,Dit is een kem. Dit is een heel klein **ding**.,other,,other,,
+C065,gemma4-e4b-it,nonce:kuim:T5_fewshot,sample,4,kuim,-pje,kuimtje,dim,-tje,dim,-tje,
+C066,fietje-2,real:boer:T3_two_objects,greedy,0,boer,-tje," een boerin.
+Het is een boer.
+Het is een boerin",other,,other,,
+C067,eurollm-9b-instruct,nonce:reng:T2_frame,sample,2,reng,-etje,"De juiste afwerking van de zin is:  
+**""Dit is een ren. Dit is een heel klein",other,,other,,
+C068,eurollm-1.7b-instruct,real:kam:T5_fewshot,sample,4,kam,-etje,"Ik weet het niet. Maar ik denk dat ik het weet. Kam is klein, dus je kunt het verkleinen",other,,other,,
+C069,gemma4-e2b-it,real:duim:T2_frame,greedy,0,duim,-pje,Dit is een duim. Dit is een heel klein **ding**.,other,,other,,
+C070,eurollm-1.7b-instruct,nonce:jin:T4_metalinguistic,greedy,0,jin,-etje,Het verkleinwoord van 'jin' is 'jin'.,bare,,bare,,
+C071,fietje-2,real:zeil:T3_two_objects,sample,2,zeil,-tje," het is een stukje zeil.
+Hoe noem je het grote voorwer",other,,other,,
+C072,gemma4-e2b-it,real:muis:T3_two_objects,sample,2,muis,-je,Muis,bare,,bare,,
+C073,gemma4-e2b-it,nonce:tuif:T1_original,sample,6,tuif,-je,Tuif,bare,,bare,,
+C074,fietje-2,nonce:muin:T2_frame,sample,8,muin,-tje, woordje en daarom voorzien we dit voorzichtig van een hoof,other,,other,,
+C075,gemma4-e2b-it,real:raam:T5_fewshot,sample,6,raam,-pje,raamje,dim,-je,dim,-pje,
+C076,eurollm-1.7b-instruct,real:ketting:T2_frame,sample,4,ketting,-kje,Dit is een ketting.,other,,bare,,
+C077,fietje-2,real:duif:T5_fewshot,greedy,0,duif,-je," duifje
+koe → koeienkopje
+kip → kippenkopje
+",dim,-je,dim,-je,
+C078,gemma4-e2b-it,real:deur:T5_fewshot,sample,1,deur,-tje,deurtje,dim,-tje,dim,-tje,
+C079,eurollm-9b-instruct,real:koning:T2_frame,sample,4,koning,-kje,Dit is een koning. Dit is een heel klein **koninkje**.,dim,-kje,dim,-kje,
+C080,gemma4-12b-it,nonce:todding:T3_two_objects,sample,8,todding,-kje,Een todding.,bare,,bare,,
+C081,gemma4-e4b-it,real:riem:T4_metalinguistic,sample,10,riem,-pje,riemje,dim,-je,dim,-pje,
+C082,gemma4-e2b-it,real:deur:T4_metalinguistic,sample,5,deur,-tje,deur,bare,,bare,,
+C083,gemma4-e2b-it,nonce:joer:T1_original,sample,10,joer,-tje,Kleine joer,klein+N,,klein+N,,
+C084,gemma4-e2b-it,real:haring:T3_two_objects,sample,3,haring,-kje,Een haring,bare,,bare,,
+C085,gemma4-12b-it,real:riem:T2_frame,sample,3,riem,-pje,**voorbeeld**,other,,other,,
+C086,gemma4-12b-it,real:kam:T2_frame,sample,1,kam,-etje,**huis.**,other,,other,,
+C087,gemma4-e2b-it,real:boom:T5_fewshot,sample,2,boom,-pje,boompje,dim,-pje,dim,-pje,
+C088,eurollm-1.7b,real:deur:T1_original,greedy,0,deur,-tje,"object 4 is een deur.
+Op een tekening staan zes genummerde voorwerpen. Object 1 is",bare,,bare,,
+C089,eurollm-1.7b-instruct,real:duif:T1_original,sample,3,duif,-je,"Het antwoord is ""kleiner"".
+Op een tekening staan zes genummerde voorwerpen. Object 1 is",other,,other,,
+C090,eurollm-1.7b,nonce:duil:T2_frame,sample,7,duil,-tje,beetje en als je het echt heel klein vindt dan is het een duil. Het is een klein klein duifje,misread,,misread,,
+C091,eurollm-1.7b,real:haring:T5_fewshot,sample,9,haring,-kje,"harinkje
+buik → buikje
+deur → deurkeuken
+koffie → koffietje
+",dim,-kje,dim,-kje,
+C092,eurollm-1.7b,real:riem:T4_metalinguistic,greedy,0,riem,-pje,"Riem
+Wat is het verkleinwoord van 'riem'?
+Wat is het verkleinwoord van 'riem",bare,,bare,,
+C093,fietje-2,real:zeil:T1_original,greedy,0,zeil,-tje," Object 4 is een klein zeil.
+Object 5 is een klein zeil dat op een",klein+N,,klein+N,,
+C094,eurollm-1.7b,real:duif:T5_fewshot,sample,5,duif,-je,"duiventje
+papegaai → papegaaitje
+vliegtuig → vliegertje
+stomm → st",other,,other,,
+C095,fietje-2,nonce:joer:T4_metalinguistic,sample,5,joer,-tje," joerje
+Wat is het verkleinwoord van 'sjeur'?
+Antwoord",dim,-je,dim,-je,
+C096,eurollm-1.7b-instruct,real:kip:T1_original,sample,5,kip,-je,Op de tekening staan zes genummerde voorwerpen. Object 1 is een kip. Object 4 is net,other,,other,,
+C097,eurollm-1.7b-instruct,nonce:kem:T4_metalinguistic,sample,6,kem,-etje,Het verkleinwoord van 'kem' is 'kem'.,bare,,bare,,
+C098,eurollm-1.7b-instruct,real:haring:T2_frame,sample,8,haring,-kje,Dit is een haring. Dichtbij is een heel klein haring.,klein+N,,klein+N,,
+C099,fietje-2,real:pen:T5_fewshot,sample,1,pen,-etje," pen
+stoel → stoeltje
+krant → krantje
+huis in België →",bare,,bare,,
+C100,gemma4-e2b-it,real:duif:T1_original,sample,8,duif,-je,Duifje,dim,-je,dim,-je,
+C101,eurollm-9b-instruct,real:ring:T1_original,sample,7,ring,-etje,"**Antwoord:** Ring.  
+
+Object 4 is een ring, net zoals object 1, maar",bare,,bare,,
+C102,eurollm-9b-instruct,real:haring:T5_fewshot,sample,4,haring,-kje,Het verkleinwoord van 'haring' is **'haantje'**.,other,,misread,,
+C103,fietje-2,real:boer:T5_fewshot,sample,1,boer,-tje," boerke
+
+Spreekwoorden 
+De volgende spreekwoorden bevatten",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C104,gemma4-e2b-it,nonce:biening:T1_original,sample,2,biening,-kje,Kleine biening,klein+N,,klein+N,,
+C105,eurollm-1.7b-instruct,real:koning:T2_frame,sample,2,koning,-kje,Hierbij wil ik je bedanken voor je feedback. We zijn blij dat je deze versie van de zin leuk vindt,other,,other,,
+C106,fietje-2,nonce:biening:T5_fewshot,sample,1,biening,-kje," bieningtje
+stoel → stoeltje
+tafel → tafeltje
+",dim,-tje,dim,-tje,
+C107,eurollm-9b-instruct,nonce:muim:T2_frame,greedy,0,muim,-pje,Dit is een muis. Dit is een heel klein muisje.,misread,,misread,,Also klein+N form is shown
+C108,eurollm-9b-instruct,nonce:reng:T3_two_objects,sample,10,reng,-etje,"Een **ren** is een grote ren, dus het kleine voorwerp is een **rennetje**.  
+
+",misread,,dim,-etje,
+C109,eurollm-1.7b-instruct,nonce:tuif:T5_fewshot,sample,1,tuif,-je,Het verkleinwoord is 'tuifje'.,dim,-je,dim,-je,
+C110,eurollm-1.7b-instruct,real:kip:T5_fewshot,sample,7,kip,-je,Kippetje.,dim,-etje,dim,-etje,
+C111,eurollm-1.7b,real:zeil:T2_frame,sample,5,zeil,-tje,zeil. De naam is te herleiden van een klein zeil wat in de 13e eeuw werd,bare,,bare,,
+C112,gemma4-12b-it,nonce:mozing:T3_two_objects,sample,10,mozing,-kje,Een mozing.,bare,,bare,,
+C113,eurollm-1.7b-instruct,real:kip:T5_fewshot,sample,9,kip,-je,"Kikkererdje, kikkertje, kikkervisje, kikkertje, kikkervik,",other,,other,,
+C114,eurollm-1.7b,real:kip:T5_fewshot,sample,6,kip,-je,"kikkertje
+boom → boommetertje
+vogel → vogeltjes
+dieren → diermetje
+vog",other,,other,,
+C115,fietje-2,real:leuning:T5_fewshot,sample,9,leuning,-kje," leuningetje
+
+Externe link
+ Verkleinwoorden
+
+Nederlands
+Wo",dim,-etje,dim,-etje,
+C116,eurollm-9b-instruct,real:zeil:T1_original,sample,7,zeil,-tje,mini zeil,klein+N,,klein+N,,"""mini"" functions as ""klein"""
+C117,gemma4-e2b-it,nonce:duip:T1_original,sample,5,duip,-je,Een kleine duip,klein+N,,klein+N,,
+C118,eurollm-1.7b-instruct,nonce:todding:T5_fewshot,sample,7,todding,-kje,U kunt het verkleinwoord van 'todding' niet op deze manier vinden omdat er geen woord is met één,other,,other,,
+C119,gemma4-12b-it,nonce:mozing:T3_two_objects,sample,2,mozing,-kje,Een mozing.,bare,,bare,,
+C120,eurollm-1.7b-instruct,nonce:todding:T4_metalinguistic,sample,7,todding,-kje,Het verkleinwoord van 'todding' is 'toddingetje'.,dim,-etje,dim,-etje,
+C121,eurollm-1.7b-instruct,real:muis:T4_metalinguistic,sample,4,muis,-je,Het verkleinwoord van 'muis' is 'muisje'.,dim,-je,dim,-je,
+C122,eurollm-1.7b-instruct,real:duim:T4_metalinguistic,sample,6,duim,-pje,Het verkleinwoord van 'duim' is 'duintje'.,misread,,misread,,
+C123,eurollm-9b-instruct,nonce:kuim:T1_original,sample,1,kuim,-pje,mini-kuim,klein+N,,klein+N,,"""mini"" functions as ""klein"""
+C124,eurollm-1.7b,nonce:tuif:T5_fewshot,sample,1,tuif,-je,"tuifje
+knol → knol
+blad → bladje
+boom → boomkeusje
+plant →",dim,-je,dim,-je,
+C125,fietje-2,nonce:duip:T5_fewshot,sample,3,duip,-je," duifje
+
+Bij sommige woorden is het verkleinwoord hetzelf",misread,,misread,,
+C126,gemma4-e4b-it,nonce:mozing:T1_original,greedy,0,mozing,-kje,een mozing,bare,,klein+N,,
+C127,eurollm-9b-instruct,nonce:duil:T1_original,sample,9,duil,-tje,mini duil,klein+N,,klein+N,,"""mini"" functions as ""klein"""
+C128,eurollm-1.7b,real:zeil:T5_fewshot,greedy,0,zeil,-tje,"zeiltje
+knoest → knoestje
+knoest → knoest
+knoest → kno",dim,-tje,dim,-tje,
+C129,eurollm-9b-instruct,nonce:biening:T5_fewshot,sample,10,biening,-kje,"Het woord ""biening"" wordt niet direct als verkleinwoord herkend. Mogelijk is er een typefout",other,,other,,
+C130,gemma4-12b-it,nonce:bauk:T4_metalinguistic,sample,9,bauk,-je,bauwtje,misread,,misread,,
+C131,eurollm-1.7b,nonce:duil:T5_fewshot,sample,5,duil,-tje,"duilje
+vlieg → vliegje
+huisje → huisje
+bal → bal
+tekening → teken",dim,-je,dim,-je,
+C132,eurollm-1.7b,real:riem:T3_two_objects,sample,8,riem,-pje,"klein riem.
+Er ligt drie voorwerpen van dezelfde soort op tafel: een grote en een kleine en een grote en",klein+N,,klein+N,,
+C133,eurollm-9b-instruct,real:koning:T3_two_objects,sample,9,koning,-kje,"Het kleine voorwerp is een **koning**.  
+
+(Leg uit: In de context van het gegeven",bare,,bare,,
+C134,gemma4-12b-it,real:haring:T3_two_objects,sample,9,haring,-kje,Haring,bare,,bare,,
+C135,eurollm-1.7b,nonce:tuif:T4_metalinguistic,sample,5,tuif,-je,"De verkleinwoorden van het woord tuif zijn: tuifje en tuifje.
+Verkleinwoord",dim,-je,dim,-je,
+C136,fietje-2,nonce:bauk:T5_fewshot,sample,8,bauk,-je," baantje
+rokje → rokjesje
+boekje → boekje
+schooltje",misread,,misread,,
+C137,gemma4-e2b-it,nonce:loem:T1_original,sample,7,loem,-pje,Kleine loem,klein+N,,klein+N,,
+C138,fietje-2,real:boer:T1_original,sample,2,boer,-tje," 'de kleine boer'.
+Maar op de tekening staat niet dat object 4",klein+N,,klein+N,,
+C139,gemma4-e4b-it,nonce:kem:T1_original,sample,9,kem,-etje,een miniemere kem,klein+N,,klein+N,,"Not sure what ""miniemere"" means.Seems like mini."
+C140,gemma4-12b-it,nonce:bauk:T4_metalinguistic,sample,5,bauk,-je,bauwtje,misread,,misread,,
+C141,fietje-2,nonce:muim:T2_frame,sample,8,muim,-pje, muisje. Dit is een hele kleine muis. Dit is een minusc,misread,,misread,,
+C142,gemma4-e4b-it,real:raam:T1_original,sample,8,raam,-pje,een klein raam,klein+N,,klein+N,,
+C143,gemma4-e4b-it,nonce:jin:T4_metalinguistic,sample,9,jin,-etje,jin,bare,,bare,,
+C144,gemma4-e4b-it,real:vin:T2_frame,sample,1,vin,-etje,Dit is een vin. Dit is een heel klein **visje**.,misread,,misread,,Klein+N also shows.
+C145,fietje-2,real:kam:T1_original,sample,10,kam,-etje," een kleine kam.
+Een kind zou bij het horen van de term k",klein+N,,klein+N,,
+C146,fietje-2,nonce:duil:T5_fewshot,sample,6,duil,-tje," duifje
+golfje → golf
+
+Zie ook 
+Lijst van verklein",misread,,misread,,
+C147,gemma4-12b-it,real:muis:T3_two_objects,greedy,0,muis,-je,Een muis.,bare,,bare,,
+C148,gemma4-e4b-it,nonce:kem:T1_original,sample,5,kem,-etje,een miniemere kem,klein+N,,klein+N,,"Not sure what ""miniemere"" means.Seems like mini."
+C149,gemma4-e2b-it,nonce:reng:T5_fewshot,sample,5,reng,-etje,reingje,misread,,dim,-je,
+C150,eurollm-9b-instruct,nonce:duip:T1_original,sample,4,duip,-je,duimpje,misread,,misread,,
+C151,gemma4-e4b-it,nonce:duip:T5_fewshot,sample,8,duip,-je,duupje,misread,,misread,,
+C152,eurollm-9b-instruct,real:ketting:T1_original,sample,6,ketting,-kje,**Klein ketting**,klein+N,,klein+N,,
+C153,gemma4-12b-it,nonce:mozing:T2_frame,sample,7,mozing,-kje,**monstertje**,other,,misread,,
+C154,gemma4-12b-it,nonce:bauk:T5_fewshot,sample,4,bauk,-je,bauwtje,misread,,misread,,
+C155,eurollm-1.7b-instruct,real:raam:T3_two_objects,sample,9,raam,-pje,Klein raam.,klein+N,,klein+N,,
+C156,eurollm-1.7b-instruct,real:duim:T3_two_objects,sample,6,duim,-pje,Hele kleine duim.,klein+N,,klein+N,,
+C157,eurollm-1.7b-instruct,real:duim:T5_fewshot,greedy,0,duim,-pje,Het verkleinwoord van 'duim' is 'duintje'.,misread,,misread,,
+C158,eurollm-9b-instruct,real:vin:T2_frame,sample,7,vin,-etje,Dit is een vin. Dit is een heel klein **visje**.,misread,,misread,,Klein+N also shows.
+C159,eurollm-1.7b-instruct,real:kip:T5_fewshot,sample,1,kip,-je,Het verkleinde woord voor 'kip' is 'kiepje'.,misread,,misread,,
+C160,eurollm-1.7b,real:zeil:T3_two_objects,sample,4,zeil,-tje,"De kleine zeil.
+In het vorige deel van deze opdracht heb je geleerd dat je een voorwerp moet beno",klein+N,,klein+N,,
+C161,gemma4-e4b-it,nonce:reng:T1_original,greedy,0,reng,-etje,een klein reng,klein+N,,klein+N,,
+C162,eurollm-9b-instruct,real:tuin:T1_original,sample,4,tuin,-tje,mini-tuin,klein+N,,klein+N,,"""mini"" functions as ""klein"""
+C163,gemma4-e4b-it,real:haring:T1_original,sample,5,haring,-kje,een kleine haring,klein+N,,klein+N,,
+C164,gemma4-e4b-it,nonce:jin:T3_two_objects,sample,5,jin,-etje,een minijin,klein+N,,klein+N,,"""mini"" functions as ""klein"""
+C165,eurollm-1.7b,nonce:loem:T1_original,sample,7,loem,-pje,"Een klein loem.
+13. Hoe heet de volgende set van drie voorwerpen?
+Op een tekening",klein+N,,klein+N,,
+C166,eurollm-9b-instruct,nonce:loem:T5_fewshot,sample,8,loem,-pje,loempie,dialect,-ie,dim,-pje,
+C167,gemma4-e4b-it,nonce:loem:T4_metalinguistic,sample,3,loem,-pje,loemie,dialect,-ie,dialect,-ie,
+C168,gemma4-e4b-it,nonce:tuif:T1_original,sample,4,tuif,-je,een kleine tuif,klein+N,,klein+N,,
+C169,gemma4-e2b-it,real:kip:T4_metalinguistic,sample,7,kip,-je,Kippie,dialect,-ie,dialect,-ie,
+C170,eurollm-1.7b,real:kam:T3_two_objects,sample,9,kam,-etje,"De kleine kam
+De kleine kam is een soort van het grote voorwerp. Je kunt een voorwerp zeggen wat zijn",klein+N,,klein+N,,
+C171,gemma4-e4b-it,nonce:biening:T5_fewshot,sample,2,biening,-kje,bienetje,other,,misread,,
+C172,eurollm-1.7b,nonce:muin:T3_two_objects,sample,5,muin,-tje,"kleine muin
+In veel verhalen komt het voor dat een kind met een grote buik in het ziekenhuis komt en er een",klein+N,,klein+N,,
+C173,eurollm-1.7b-instruct,nonce:loem:T5_fewshot,sample,7,loem,-pje,loem → loempie,dialect,-ie,dialect,-ie,
+C174,fietje-2,nonce:mozing:T3_two_objects,sample,6,mozing,-kje," het kleine voorwerp is een kleine mozing.
+1. Wat bedo",klein+N,,klein+N,,
+C175,fietje-2,real:haring:T1_original,sample,8,haring,-kje," de kleine haring.
+Op een tekening staan vijf objecten: object 1",klein+N,,klein+N,,
+C176,gemma4-e2b-it,real:boom:T4_metalinguistic,sample,1,boom,-pje,boontje,misread,,misread,,
+C177,gemma4-e4b-it,nonce:duil:T1_original,sample,7,duil,-tje,een duifje,misread,,misread,,
+C178,gemma4-12b-it,nonce:muim:T4_metalinguistic,sample,1,muim,-pje,muimpie,dialect,-ie,dialect,-ie,
+C179,gemma4-e2b-it,real:kip:T4_metalinguistic,greedy,0,kip,-je,kippie,dialect,-ie,dialect,-ie,
+C180,gemma4-e2b-it,real:boom:T4_metalinguistic,sample,4,boom,-pje,boontje,misread,,misread,,
+C181,gemma4-e4b-it,nonce:tuif:T1_original,sample,2,tuif,-je,een klein tuintje,misread,,misread,,Klein+N also shows.
+C182,gemma4-e2b-it,real:kip:T4_metalinguistic,sample,8,kip,-je,kippie,dialect,-ie,dialect,-ie,
+C183,gemma4-12b-it,nonce:muim:T4_metalinguistic,sample,5,muim,-pje,muimpie,dialect,-ie,dialect,-ie,
+C184,gemma4-e2b-it,real:boom:T4_metalinguistic,greedy,0,boom,-pje,boontje,misread,,misread,,
+C185,gemma4-12b-it,nonce:muim:T5_fewshot,sample,7,muim,-pje,muimpie,dialect,-ie,dialect,-ie,
+C186,eurollm-1.7b,real:boer:T4_metalinguistic,sample,2,boer,-tje,"'boerke'
+Wat is het verkleinwoord van 'boerka'?",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C187,gemma4-12b-it,nonce:muim:T5_fewshot,sample,2,muim,-pje,muimpie,dialect,-ie,dialect,-ie,
+C188,fietje-2,nonce:jin:T5_fewshot,sample,6,jin,-etje," jinke
+
+Nederlandse taalGebruik deze prachtige kruisste",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C189,gemma4-e4b-it,nonce:reng:T4_metalinguistic,greedy,0,reng,-etje,rengie,dialect,-ie,dialect,-ie,
+C190,gemma4-12b-it,nonce:kuim:T4_metalinguistic,sample,1,kuim,-pje,kuimpie,dialect,-ie,dialect,-ie,
+C191,fietje-2,nonce:jin:T5_fewshot,sample,3,jin,-etje," jinke
+balletje → balletje
+kleine → kleine vrouwtje
+g",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C192,gemma4-e2b-it,real:kip:T4_metalinguistic,sample,9,kip,-je,kippie,dialect,-ie,dialect,-ie,
+C193,eurollm-1.7b,nonce:loem:T5_fewshot,sample,9,loem,-pje,"loempie
+mooi → mooi
+rood → roodbruin
+geel → geelbruin
+gro",dialect,-ie,dialect,-ie,
+C194,fietje-2,real:boer:T5_fewshot,sample,5,boer,-tje," boerke
+gemaakt → gemaakt
+werkje → werkje
+plank",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C195,eurollm-1.7b,real:boer:T5_fewshot,greedy,0,boer,-tje,"boerke
+boom → boompje
+kind → kindje
+kindje → kindje
+kind → kind",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C196,eurollm-1.7b,nonce:loem:T5_fewshot,sample,1,loem,-pje,"loempie
+koekje → koekje
+knoek → knokkel
+pauw →",dialect,-ie,dialect,-ie,
+C197,gemma4-e2b-it,real:boom:T4_metalinguistic,sample,10,boom,-pje,boontje,misread,,misread,,
+C198,eurollm-1.7b-instruct,nonce:loem:T5_fewshot,sample,5,loem,-pje,1 woord: loempie.,dialect,-ie,dialect,-ie,
+C199,gemma4-e4b-it,real:kip:T4_metalinguistic,sample,6,kip,-je,kippie,dialect,-ie,dialect,-ie,
+C200,eurollm-1.7b-instruct,real:boer:T5_fewshot,greedy,0,boer,-tje,Het verkleinwoord van 'boer' is 'boerke'.,dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C201,gemma4-e4b-it,real:raam:T5_fewshot,sample,3,raam,-pje,raamkie,dialect,-ie,dialect,-ie,
+C202,fietje-2,real:boer:T5_fewshot,sample,10,boer,-tje," boerke
+gebroeders → broeders
+zusje → zuske
+wens →",dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C203,gemma4-e4b-it,nonce:reng:T4_metalinguistic,sample,2,reng,-etje,rengie,dialect,-ie,dialect,,
+C204,eurollm-9b-instruct,nonce:loem:T4_metalinguistic,sample,4,loem,-pje,loempie,dialect,-ie,dialect,,
+C205,eurollm-1.7b-instruct,nonce:loem:T5_fewshot,sample,2,loem,-pje,loempie,dialect,-ie,dialect,,
+C206,eurollm-1.7b-instruct,real:boer:T5_fewshot,sample,6,boer,-tje,Een verkleinwoord van 'boer' is 'boerke'.,dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C207,gemma4-e2b-it,real:kip:T4_metalinguistic,sample,5,kip,-je,kippie,dialect,-ie,dialect,,
+C208,eurollm-9b-instruct,nonce:kuim:T5_fewshot,sample,1,kuim,-pje,kuim → kuimke,dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C209,eurollm-9b-instruct,nonce:kuim:T4_metalinguistic,sample,1,kuim,-pje,kuimke,dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake
+C210,eurollm-9b-instruct,real:boer:T1_original,sample,3,boer,-tje,Boerke,dialect,-ie,dialect,,Not sure if -ke is considered as a dialect or mistake

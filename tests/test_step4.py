@@ -38,6 +38,18 @@ from wug.coding import code_model_output  # noqa: E402
     ("duil\nboom → boompje\nduil → duiltje", "duil", "bare", None),  # base model rambling
     ("muin. Dit is een heel klein muin. Dit is", "muin", "bare", None),
     ("kempje\nkip → kipje", "kem", "dim", "-pje"),
+    # manual-check disagreements (2026-11-08)
+    (" stukje van de tuin. In het midden is een kruidentuin.", "tuin", "other", None),
+    ("Een **tuin** is een groot voorwerp, maar het kleine voorwerp", "tuin", "other", None),
+    ("Op de tekening staan zes genummerde voorwerpen. Object 1 is een kip. Object 4 is net", "kip", "other", None),
+    ("een miniemere kem", "kem", "klein+N", None),
+    ("muis", "muin", "misread", None),
+    ("kikkertje\nkip → kipje", "kip", "other", None),
+    ("Een klein kind.", "koning", "other", None),
+    ("Dit is een todding. Dit is een heel klein **dopje**.", "todding", "other", None),
+    ("Ik weet het niet. Maar ik denk dat ik het weet. Kam is klein", "kam", "other", None),
+    ("5 is een duip.", "duip", "bare", None),
+    ("Een **ren** is een grote ren, dus het kleine voorwerp is een **rennetje**.", "reng", "misread", None),
 ])
 def test_extraction(output, stem, strategy, produced):
     c = code_model_output(output, stem)
