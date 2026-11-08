@@ -161,3 +161,14 @@ wide with three nonce items per suffix. The consonant-following index counts non
 whose suffix matches the stem's final consonant (n, l, r to -tje; m to -pje; ng to -kje; chance
 = 1/4), with per-item counts. Method B gives P(suffix | stem) by softmax over the five candidates,
 raw and calibrated against the neutral context.
+
+## Step 6: figures
+
+```bash
+python scripts/06_figures.py      # figures/fig1-3 as PNG and PDF, from outputs/analysis/
+```
+
+1. Accuracy by suffix for native speakers, each model and the model mean, for methods A and B.
+2. Which suffix is produced for *-kje* and *-etje* nonce targets, native speakers vs models pooled.
+3. Share of nonce *-etje* errors that follow the final consonant, per model, with Wilson intervals.
+
