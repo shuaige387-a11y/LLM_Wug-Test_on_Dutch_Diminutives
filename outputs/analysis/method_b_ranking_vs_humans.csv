@@ -1,0 +1,8 @@
+model,spearman_rho,n_suffixes,model_order
+eurollm-1.7b,0.30779350562554625,5,-je > -etje > -tje > -pje > -kje
+eurollm-9b,0.6668859288553501,5,-je > -tje > -etje > -pje > -kje
+fietje-2,0.30779350562554625,5,-je > -etje > -tje > -pje > -kje
+gemma4-12b,0.8720815992723809,5,-je > -tje > -pje > -etje > -kje
+gemma4-e2b,0.8720815992723809,5,-je > -tje > -pje > -etje > -kje
+gemma4-e4b,0.8720815992723809,5,-je > -tje > -pje > -etje > -kje
+human_native,1.0,5,-je > -tje > -pje > -kje > -etje

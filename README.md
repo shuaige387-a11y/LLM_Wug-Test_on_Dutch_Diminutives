@@ -145,3 +145,19 @@ agreement was 86.7% (Cohen's kappa .84). After the two rules above were added it
 That figure is optimistic, because the rules were revised on this same sample.
 The test cases in `tests/test_step4.py` come from the
 Colab pilot run.
+
+## Step 5: analysis
+
+```bash
+python scripts/05_analyse.py      # writes outputs/analysis/*.csv and prints the headline numbers
+```
+
+`src/wug/analysis.py` builds each table from the coded outputs, the method B scores and the human
+aggregates. Accuracy is the share of correct suffixes among diminutive answers. Each table is
+given for all templates, for T1-T3 (the human task framings) and for T4-T5, and for all outputs
+and for greedy outputs only. Wilson intervals treat outputs as independent and are therefore too
+narrow. The item bootstrap (resampling stems within each suffix) is the honest interval, and it is
+wide with three nonce items per suffix. The consonant-following index counts nonce *-etje* errors
+whose suffix matches the stem's final consonant (n, l, r to -tje; m to -pje; ng to -kje; chance
+= 1/4), with per-item counts. Method B gives P(suffix | stem) by softmax over the five candidates,
+raw and calibrated against the neutral context.
