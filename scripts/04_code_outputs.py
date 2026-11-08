@@ -51,8 +51,29 @@ def draw_sample(d: pd.DataFrame, n: int, seed: int) -> pd.DataFrame:
     return s
 
 
+def cohen_kappa(a: pd.Series, b: pd.Series) -> float:
+    cats = sorted(set(a) | set(b))
+    po = (a.values == b.values).mean()
+    pe = sum((a == c).mean() * (b == c).mean() for c in cats)
+    return (po - pe) / (1 - pe) if pe < 1 else 1.0
+
+
 def agreement(path: Path) -> None:
-    m = pd.read_csv(path, keep_default_na=False)
+    """Compare manual codes with the automatic ones.
+
+    Accepts the CSV sample itself or the blind Excel workbook (merged back on check_id).
+    Suffixes may be written with or without the leading hyphen ('pje' or '-pje').
+    """
+    if path.suffix == ".xlsx":
+        manual = pd.read_excel(path, sheet_name="check", dtype=str).fillna("")
+        auto = pd.read_csv(ROOT / "outputs" / "coded" / "manual_check.csv", keep_default_na=False)
+        m = auto.drop(columns=["manual_strategy", "manual_produced", "note"], errors="ignore").merge(
+            manual[["check_id", "manual_strategy", "manual_produced", "note"]], on="check_id")
+    else:
+        m = pd.read_csv(path, keep_default_na=False)
+    m["manual_strategy"] = m.manual_strategy.str.strip()
+    m["manual_produced"] = [("-" + p.strip().lstrip("-")) if p.strip() else "" for p in m.manual_produced]
+    m["produced"] = m["produced"].fillna("").astype(str)
     m = m[m.manual_strategy != ""]
     if m.empty:
         sys.exit("no rows filled in yet")
@@ -61,6 +82,7 @@ def agreement(path: Path) -> None:
     sf = (dim.manual_produced == dim.produced).mean() if len(dim) else float("nan")
     print(f"checked rows: {len(m)}")
     print(f"strategy agreement: {st:.1%}")
+    print(f"Cohen's kappa (strategy): {cohen_kappa(m.manual_strategy, m.strategy):.2f}")
     print(f"suffix agreement on manual 'dim' rows: {sf:.1%} (n={len(dim)})")
     bad = m[(m.manual_strategy != m.strategy) | ((m.manual_strategy == "dim") & (m.manual_produced != m.produced))]
     if len(bad):
