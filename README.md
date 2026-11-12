@@ -1,174 +1,116 @@
-# Dutch diminutive wug-test: humans vs. LLMs
+# Do language models generalise Dutch diminutives like native speakers?
 
-Extends a human wug-test on the five Dutch diminutive allomorphs (-je, -tje, -pje, -kje, -etje)
-to large language models. Work in progress; modules are added one step at a time.
+A wug test of the five Dutch diminutive allomorphs (*-je, -tje, -pje, -kje, -etje*) given to
+native speakers and to open language models, with the same nonce words, the same answer coding
+and the same error analysis.
 
-## Layout
+The human study (26 native speakers, 8 L2 learners, 15 nonce words) was run with Giancarlo Grillo
+and supervised by Dr Eva van Lier (University of Amsterdam). This repository extends it to 11 open
+model checkpoints (EuroLLM, Gemma 4, Fietje 2; 1.7B to 12B parameters).
+
+![Accuracy by suffix: native speakers vs models](figures/fig1_accuracy_by_suffix.png)
+
+## Main findings
+
+- **Different difficulty profiles.** Native speakers find *-etje* hardest (7/19 correct). Every
+  model finds *-kje* hardest, in generation and in log-probability scoring alike (mean
+  P(*-kje*) .01 to .28 for nonce words, against 14/20 for native speakers).
+- **Stress is ignored.** For *-kje* targets, 52% of the models' diminutives use *-etje*
+  (*toddingetje* for *toddinkje*), against 15% for native speakers. This is the pattern for stressed
+  *-ng* (*ringetje*) applied to unstressed *-ing* (*koninkje*).
+- **Error patterns vary.** Native speakers' *-etje* errors mostly follow the stem-final consonant
+  (9/12, e.g. *kempje*). For models this ranges from 0/15 to 18/18 and depends strongly on the
+  item.
+- **Real words are slightly easier** (0 to 13 points), and EuroLLM 9B beats 1.7B. Larger Gemma
+  models are not consistently better, and the Dutch-specific Fietje 2 is not more accurate than
+  general models of similar size.
+
+With three nonce words per suffix and a small, informally recruited human sample, these are
+descriptive patterns rather than tested differences. See [Limitations](#limitations).
+
+## Research questions
+
+1. How accurate are models per suffix, and do they rank the suffixes by difficulty as native
+   speakers do?
+2. Do models' *-etje* errors follow the stem-final consonant, as the human errors do?
+3. How large is the gap between real words and nonce words?
+4. (Exploratory) Does accuracy depend on model size or on Dutch-specific training?
+
+## Design
+
+| | Method A: generation | Method B: scoring |
+|---|---|---|
+| Models | 5 instruct models + 2 base models | 6 base models |
+| Task | 5 prompt templates (3 mirror the human task, 1 metalinguistic, 1 few-shot) | P(suffix \| stem) over the 5 candidate forms after *Dit is een X. Dit is een heel klein ...* |
+| Runs | 1 greedy + 10 samples (T = 0.7) per prompt; 13,475 outputs | one forward pass per candidate and context |
+| Analysis | rule-based coding (same scheme as the human answers), accuracy among diminutive answers | mean P(correct), top-1 accuracy |
+
+Stimuli: 15 core nonce words (3 per suffix, generated with Wuggy), 51 reserve nonce words and 20
+real words. All open models run in 4-bit NF4 on a single Colab T4 GPU, and the exact model
+revisions are recorded in [`outputs/raw/MODEL_REVISIONS.md`](outputs/raw/MODEL_REVISIONS.md).
+A runner for one closed API model (Claude Sonnet 5.5, generation only) is included but has not
+been run yet.
+
+The automatic coder was checked against 210 manually coded outputs: 91.0% agreement on the answer
+strategy, Cohen's κ = .89.
+
+Full details of every step are in [`docs/METHODS.md`](docs/METHODS.md).
+
+## Repository structure
 
 ```
-data/stimuli/nonce_words.csv   15 core + 51 reserve nonce words (Wuggy, orthographic_dutch)
-data/stimuli/candidates.csv    all five candidate forms per stem (generated, step 1)
-data/human/                    aggregate human results only (no trial-level data)
-data/private/                  raw survey export + exclusion list (git-ignored, never published)
-src/wug/stimuli.py             stimulus loading, Dutch diminutive spelling rules
-src/wug/coding.py              rule-based answer coder shared by human and model data
-src/wug/human.py               human data coding and aggregate export
-src/wug/prompts.py             prompt rendering (method A) and scoring items (method B)
-config/templates.yaml          the five prompt templates, few-shot examples, scoring frames
-data/stimuli/real_words.csv    20 real-word baseline items (Wuggy templates, 4 per condition)
-prompts/                       generated prompts + MANIFEST.json (step 2)
-scripts/01_load_data.py        step 1
-scripts/02_build_prompts.py    step 2
-config/models.yaml             open models, decoding settings, seed
-src/wug/hf_runner.py           4-bit loading, generation (method A), log-prob scoring (method B)
-scripts/03_run_hf.py           step 3, one model and method per call; resumable
-notebooks/03_run_models_colab.ipynb   step 3 on a free Colab T4
-outputs/raw/<model>/           raw model outputs + run metadata
-scripts/04_code_outputs.py     step 4: code model outputs, manual-check sample, agreement
-outputs/coded/                 coded model outputs (step 4)
-tests/                         pytest checks
+config/        model list, decoding settings, prompt templates
+data/stimuli/  nonce words, real words, candidate forms
+data/human/    anonymised aggregate human results (no trial-level data)
+src/wug/       the Python package: stimuli, coding, prompts, model runners, analysis
+scripts/       one script per pipeline step (01 to 06)
+notebooks/     Colab notebooks for the model runs
+prompts/       generated prompts and scoring items
+outputs/raw/   raw model outputs and run metadata
+outputs/coded/ coded outputs and the manual check
+outputs/analysis/  analysis tables
+figures/       figures (PNG and PDF)
+tests/         pytest checks for each step
+docs/          methods documentation
 ```
 
-## Step 1: stimuli and human data
+## Reproducing the results
+
+The analysis runs on a laptop from the outputs in this repository:
 
 ```bash
 pip install -r requirements.txt
-python scripts/01_load_data.py                     # stimuli only
-python scripts/01_load_data.py --human-raw data/private/raw_qualtrics_export.xlsx \
-                               --exclusions data/private/human_exclusions.yaml
+python scripts/02_build_prompts.py   # rebuild the prompts
+python scripts/04_code_outputs.py    # code the raw outputs
+python scripts/05_analyse.py         # tables in outputs/analysis/
+python scripts/06_figures.py         # figures/
 pytest -q
 ```
 
-With the private files present, the coder reproduces the native-speaker results of the original
-study exactly (35 participants and 175 trials after exclusion: 26 native speakers, 8 L2 learners,
-and 1 Surinamese Dutch speaker who is analysed separately and not published; native accuracy among
-diminutive answers -je 19/19, -tje 16/16, -pje 15/20, -kje 14/20, -etje 7/19; 9 of 12 -etje errors
-follow the stem-final consonant). An answer like "kleine rengje" counts as a diminutive, and when an
-answer offers alternatives ("Renkje of Rengetje") the first one is coded. `tests/test_step1.py::test_reproduces_slides` checks this.
+Rerunning the models needs a GPU. Open [`notebooks/03_run_models_colab.ipynb`](notebooks/03_run_models_colab.ipynb)
+in Colab with a T4 runtime, or run `scripts/03_run_hf.py` (see `docs/METHODS.md`, step 3).
 
-## Step 2: prompts
+## Data and privacy
 
-```bash
-python scripts/02_build_prompts.py               # writes prompts/, prints every template for 'tuif'
-python scripts/02_build_prompts.py --show reng
-```
+Only anonymised aggregate human results are published (`data/human/`). The raw survey export,
+the trial-level data and the exclusion list stay private. `scripts/01_load_data.py` rebuilds the
+aggregates when those files are present. One participant who speaks Surinamese Dutch is analysed
+separately and is not included in the published aggregates.
 
-Five templates (`config/templates.yaml`), each with a chat form (instruct and API models, one user
-turn, no system prompt) and a base form (plain text continued by a base model):
+## Limitations
 
-| id | what it is | comparable with humans |
-|---|---|---|
-| T1_original | survey question; the picture is replaced by "object 4 is the same kind of object as object 1, but much smaller"; original object numbers | yes |
-| T2_frame | "Dit is een tuif. Dit is een heel klein ..." (uninflected *klein* cues a neuter noun, i.e. a diminutive) | yes |
-| T3_two_objects | a big and a very small object of the same kind described in words | yes |
-| T4_metalinguistic | "Wat is het verkleinwoord van 'tuif'?" | no (asks for a diminutive) |
-| T5_fewshot | five real-word examples, one per allomorph, in item-specific seeded order | no (asks for a diminutive) |
+1. Three nonce words per suffix, so a single item (e.g. *reng*) can move a suffix's score.
+2. A small human sample (26 native speakers) collected under uncontrolled conditions, so human
+   proportions are descriptive.
+3. Results depend on the prompt: only 8% of outputs are diminutives under the human-like
+   templates, against 56% under the metalinguistic and few-shot templates.
+4. The 11 outputs per prompt are not independent. Item-level bootstrap intervals are reported
+   as the main measure of uncertainty.
+5. The coder's rules were refined on the same sample used to check it; a fresh held-out check
+   would give an unbiased agreement estimate.
+6. Possible training-data contamination (*Baukje* is a Frisian given name).
+7. Open models up to 12B, all 4-bit quantised; no closed frontier model yet.
 
-Chat prompts of T1, T3 and T4 end with "Geef alleen uw/je antwoord." so answers stay short; this asks
-for brevity, not for a diminutive.
+## License
 
-Method B scores each of the five candidate forms as the continuation of
-"Dit is een {stem}. Dit is een heel klein" (the continuation includes the final period, so the word
-boundary is scored), and again after the neutral prefix "Het woord is" for calibration.
-
-Sizes: 86 items (15 core + 51 reserve nonce words, 20 real words) x 5 templates = 430 generation
-prompts; 86 x 5 candidates x 2 contexts = 860 scoring items. API model: 35 core items (15 nonce + 20 real words)
-x 5 templates x 11 calls = 1,925 calls (see step 3b).
-
-## Step 3: run the open models
-
-Open `notebooks/03_run_models_colab.ipynb` in Colab (T4 GPU) and run it top to bottom, or call the
-script directly:
-
-```bash
-pip install -r requirements-gpu.txt
-python scripts/03_run_hf.py --model eurollm-1.7b --method B --limit 3   # dry run on 3 words
-python scripts/03_run_hf.py --model eurollm-1.7b --method B             # 15 core + 20 real words
-python scripts/03_run_hf.py --model eurollm-1.7b --method B --words all # + 51 reserve words
-```
-
-- **Models** (`config/models.yaml`): EuroLLM 1.7B and 9B, Gemma 4 E2B, E4B and 12B, fietje-2.
-  Method B (scoring) runs on the base models. Method A (generation) runs on the instruct models,
-  plus EuroLLM-1.7B base and fietje-2 as base-model checks. All are loaded in 4-bit NF4, so size
-  is not confounded with quantization.
-- **Decoding** for method A: 1 greedy output plus 10 samples at temperature 0.7, 24 new tokens at
-  most. The sampling seed is derived from the global seed and the prompt id, so a rerun on the
-  same hardware and library versions gives the same samples. GPU kernels are not guaranteed to be
-  bit-identical across hardware.
-- **Scoring** for method B: the full string (prefix + candidate + ".") is tokenized once, and the
-  candidate's tokens are found by character offsets. The output keeps the total log-probability,
-  the per-token mean, the tokens themselves and a flag for a token that crosses the boundary.
-  `tests/test_step3.py` checks the result against log P(prefix + continuation) − log P(prefix) on
-  a tiny local model.
-- **Metadata**: every run writes `<method>_meta.json` with the model's commit hash, the UTC time,
-  library versions, the GPU and the decoding settings.
-
-## Step 3b: run the API model
-
-One API model, Claude Sonnet 5.5 (`config/api_models.yaml`), runs method A only, since closed
-models do not expose the log-probabilities that method B needs. Current Claude models do not accept
-`temperature` or `top_p`, so a greedy run and T = 0.7 sampling are not possible. Each prompt is
-sent 11 times at the model's default sampling instead, which gives the same number of outputs per
-prompt as the open models, and is recorded as `decoding = "default"`. Extended thinking is
-switched off (the model's lowest thinking setting), so that the model answers directly like the
-open models and the participants. The model id, SDK version and run date are written to
-`outputs/raw/claude-sonnet-5-5/A_meta.json`.
-
-```bash
-export ANTHROPIC_API_KEY=...        # or Colab Secrets, see notebooks/03b_run_api_colab.ipynb
-python scripts/03b_run_api.py --model claude-sonnet-5-5 --limit 1 --calls 1   # dry run, 5 calls
-python scripts/03b_run_api.py --model claude-sonnet-5-5                       # 1,925 calls
-```
-
-## Step 4: code the model outputs
-
-```bash
-python scripts/04_code_outputs.py --sample 200      # code everything + draw a manual-check sample
-# fill in manual_strategy / manual_produced in outputs/coded/manual_check.csv, then:
-python scripts/04_code_outputs.py --agreement outputs/coded/manual_check.csv
-```
-
-Models often answer with a sentence ("Het verkleinwoord van 'tuif' is 'tuifje'.", "Object 4 is
-een tuif.") and echo the stem from the question. `code_model_output` in `src/wug/coding.py` takes
-the first word built on the stem that is not the bare stem, and codes it with the same rules as the
-human answers. If there is none, the answer is bare (or klein + noun when *klein(e)* stands right
-before the stem). *Klein* + an unrelated noun (*een klein kind*) is "other". A word counts as a
-misread only if, without its diminutive ending, it is at most two edits from the stem (*kemp* for
-*kem*, *hariksje* for *haring*); anything further away (*haantje*, *ruitje*) is "other". The
-manual-check sample is stratified by model and strategy, so rare codes get checked too.
-
-Manual check (210 rows, coded blind by the first author). Before the coder was revised, strategy
-agreement was 86.7% (Cohen's kappa .84). After the two rules above were added it is 91.0% (kappa
-.89). The 23 remaining disagreements were then settled row by row
-(`outputs/coded/manual_check_adjudicated.csv`, column `adj_note`). Most were manual slips, such as
-*riemje* coded as -pje. Against the settled codes the coder agrees on 209 of 210 rows (99.5%).
-That figure is optimistic, because the rules were revised on this same sample.
-The test cases in `tests/test_step4.py` come from the
-Colab pilot run.
-
-## Step 5: analysis
-
-```bash
-python scripts/05_analyse.py      # writes outputs/analysis/*.csv and prints the headline numbers
-```
-
-`src/wug/analysis.py` builds each table from the coded outputs, the method B scores and the human
-aggregates. Accuracy is the share of correct suffixes among diminutive answers. Each table is
-given for all templates, for T1-T3 (the human task framings) and for T4-T5, and for all outputs
-and for greedy outputs only. Wilson intervals treat outputs as independent and are therefore too
-narrow. The item bootstrap (resampling stems within each suffix) is the honest interval, and it is
-wide with three nonce items per suffix. The consonant-following index counts nonce *-etje* errors
-whose suffix matches the stem's final consonant (n, l, r to -tje; m to -pje; ng to -kje; chance
-= 1/4), with per-item counts. Method B gives P(suffix | stem) by softmax over the five candidates,
-raw and calibrated against the neutral context.
-
-## Step 6: figures
-
-```bash
-python scripts/06_figures.py      # figures/fig1-3 as PNG and PDF, from outputs/analysis/
-```
-
-1. Accuracy by suffix for native speakers, each model and the model mean, for methods A and B.
-2. Which suffix is produced for *-kje* and *-etje* nonce targets, native speakers vs models pooled.
-3. Share of nonce *-etje* errors that follow the final consonant, per model, with Wilson intervals.
-
+Code: MIT (see [`LICENSE`](LICENSE)). Data and figures: CC BY 4.0.

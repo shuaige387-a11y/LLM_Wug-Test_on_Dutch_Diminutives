@@ -40,7 +40,7 @@ def _clean(ax, grid="y"):
 def _save(fig, name):
     FIG.mkdir(exist_ok=True)
     fig.savefig(FIG / f"{name}.png", dpi=200, bbox_inches="tight")
-    fig.savefig(FIG / f"{name}.pdf", bbox_inches="tight")
+    fig.savefig(FIG / f"{name}.pdf", bbox_inches="tight", metadata={"CreationDate": None})
     plt.close(fig)
 
 

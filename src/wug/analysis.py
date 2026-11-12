@@ -6,7 +6,7 @@ rebuilt and checked on its own. Confidence intervals:
 * Wilson intervals treat every output as independent. Outputs of the same item are not
   independent (11 runs per prompt, 5 templates per item), so these are too narrow.
 * `cluster_bootstrap` resamples items (stems) within each suffix condition instead. With
-  three nonce items per condition this interval is wide; that is the honest uncertainty.
+  three nonce items per condition this interval is wide; this is the relevant uncertainty.
 """
 from __future__ import annotations
 
