@@ -1,0 +1,22 @@
+{
+  "model_key": "eurollm-1.7b",
+  "hf_id": "utter-project/EuroLLM-1.7B",
+  "revision": null,
+  "run_utc": "2026-11-07T21:45:17+00:00",
+  "torch": "2.14.1+cu130",
+  "transformers": "5.22.1",
+  "python": "3.13.16",
+  "device": "cuda:0",
+  "gpu": "Tesla T4",
+  "method": "A",
+  "kind": "base",
+  "words": "core",
+  "quantization": "4bit",
+  "max_new_tokens": 24,
+  "greedy": true,
+  "n_samples": 10,
+  "temperature": 0.7,
+  "top_p": 1.0,
+  "seed": 20261107,
+  "chat_template_kwargs": null
+}

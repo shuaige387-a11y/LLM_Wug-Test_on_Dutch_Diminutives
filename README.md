@@ -24,6 +24,8 @@ src/wug/hf_runner.py           4-bit loading, generation (method A), log-prob sc
 scripts/03_run_hf.py           step 3, one model and method per call; resumable
 notebooks/03_run_models_colab.ipynb   step 3 on a free Colab T4
 outputs/raw/<model>/           raw model outputs + run metadata
+scripts/04_code_outputs.py     step 4: code model outputs, manual-check sample, agreement
+outputs/coded/                 coded model outputs (step 4)
 tests/                         pytest checks
 ```
 
@@ -70,9 +72,8 @@ Method B scores each of the five candidate forms as the continuation of
 boundary is scored), and again after the neutral prefix "Het woord is" for calibration.
 
 Sizes: 86 items (15 core + 51 reserve nonce words, 20 real words) x 5 templates = 430 generation
-prompts; 86 x 5 candidates x 2 contexts = 860 scoring items. Planned API budget per model:
-15 core words x 5 templates x (1 greedy + 10 samples) = 825 calls, plus 20 real words x 5 templates
-greedy only = 100 calls.
+prompts; 86 x 5 candidates x 2 contexts = 860 scoring items. API model: 35 core items (15 nonce + 20 real words)
+x 5 templates x 11 calls = 1,925 calls (see step 3b).
 
 ## Step 3: run the open models
 
@@ -101,3 +102,73 @@ python scripts/03_run_hf.py --model eurollm-1.7b --method B --words all # + 51 r
   a tiny local model.
 - **Metadata**: every run writes `<method>_meta.json` with the model's commit hash, the UTC time,
   library versions, the GPU and the decoding settings.
+
+## Step 3b: run the API model
+
+One API model, Claude Sonnet 5.5 (`config/api_models.yaml`), runs method A only, since closed
+models do not expose the log-probabilities that method B needs. Current Claude models do not accept
+`temperature` or `top_p`, so a greedy run and T = 0.7 sampling are not possible. Each prompt is
+sent 11 times at the model's default sampling instead, which gives the same number of outputs per
+prompt as the open models, and is recorded as `decoding = "default"`. Extended thinking is
+switched off (the model's lowest thinking setting), so that the model answers directly like the
+open models and the participants. The model id, SDK version and run date are written to
+`outputs/raw/claude-sonnet-5-5/A_meta.json`.
+
+```bash
+export ANTHROPIC_API_KEY=...        # or Colab Secrets, see notebooks/03b_run_api_colab.ipynb
+python scripts/03b_run_api.py --model claude-sonnet-5-5 --limit 1 --calls 1   # dry run, 5 calls
+python scripts/03b_run_api.py --model claude-sonnet-5-5                       # 1,925 calls
+```
+
+## Step 4: code the model outputs
+
+```bash
+python scripts/04_code_outputs.py --sample 200      # code everything + draw a manual-check sample
+# fill in manual_strategy / manual_produced in outputs/coded/manual_check.csv, then:
+python scripts/04_code_outputs.py --agreement outputs/coded/manual_check.csv
+```
+
+Models often answer with a sentence ("Het verkleinwoord van 'tuif' is 'tuifje'.", "Object 4 is
+een tuif.") and echo the stem from the question. `code_model_output` in `src/wug/coding.py` takes
+the first word built on the stem that is not the bare stem, and codes it with the same rules as the
+human answers. If there is none, the answer is bare (or klein + noun when *klein(e)* stands right
+before the stem). *Klein* + an unrelated noun (*een klein kind*) is "other". A word counts as a
+misread only if, without its diminutive ending, it is at most two edits from the stem (*kemp* for
+*kem*, *hariksje* for *haring*); anything further away (*haantje*, *ruitje*) is "other". The
+manual-check sample is stratified by model and strategy, so rare codes get checked too.
+
+Manual check (210 rows, coded blind by the first author). Before the coder was revised, strategy
+agreement was 86.7% (Cohen's kappa .84). After the two rules above were added it is 91.0% (kappa
+.89). The 23 remaining disagreements were then settled row by row
+(`outputs/coded/manual_check_adjudicated.csv`, column `adj_note`). Most were manual slips, such as
+*riemje* coded as -pje. Against the settled codes the coder agrees on 209 of 210 rows (99.5%).
+That figure is optimistic, because the rules were revised on this same sample.
+The test cases in `tests/test_step4.py` come from the
+Colab pilot run.
+
+## Step 5: analysis
+
+```bash
+python scripts/05_analyse.py      # writes outputs/analysis/*.csv and prints the headline numbers
+```
+
+`src/wug/analysis.py` builds each table from the coded outputs, the method B scores and the human
+aggregates. Accuracy is the share of correct suffixes among diminutive answers. Each table is
+given for all templates, for T1-T3 (the human task framings) and for T4-T5, and for all outputs
+and for greedy outputs only. Wilson intervals treat outputs as independent and are therefore too
+narrow. The item bootstrap (resampling stems within each suffix) is the honest interval, and it is
+wide with three nonce items per suffix. The consonant-following index counts nonce *-etje* errors
+whose suffix matches the stem's final consonant (n, l, r to -tje; m to -pje; ng to -kje; chance
+= 1/4), with per-item counts. Method B gives P(suffix | stem) by softmax over the five candidates,
+raw and calibrated against the neutral context.
+
+## Step 6: figures
+
+```bash
+python scripts/06_figures.py      # figures/fig1-3 as PNG and PDF, from outputs/analysis/
+```
+
+1. Accuracy by suffix for native speakers, each model and the model mean, for methods A and B.
+2. Which suffix is produced for *-kje* and *-etje* nonce targets, native speakers vs models pooled.
+3. Share of nonce *-etje* errors that follow the final consonant, per model, with Wilson intervals.
+
