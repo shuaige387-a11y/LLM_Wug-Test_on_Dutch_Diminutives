@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -40,6 +42,8 @@ def main() -> None:
     ap.add_argument("--words", choices=["core", "nonce-core", "all"], default="core")
     ap.add_argument("--limit", type=int, help="only the first N stems (dry run)")
     ap.add_argument("--models-config", default=str(ROOT / "config" / "models.yaml"))
+    ap.add_argument("--clear-cache", action="store_true",
+                    help="delete this model's Hugging Face download cache afterwards (saves Colab disk)")
     a = ap.parse_args()
 
     cfg = yaml.safe_load(open(a.models_config))
@@ -61,6 +65,7 @@ def main() -> None:
     todo = items[~items[key].isin(done)]
     print(f"{a.model} method {a.method}: {len(items)} items, {len(done)} already done, {len(todo)} to run")
     if todo.empty:
+        clear_cache(m["hf_id"], a.clear_cache)
         return
 
     model, tok = hf_runner.load_model(m["hf_id"], settings["quantization"])
@@ -83,6 +88,22 @@ def main() -> None:
             if n % 50 == 0:
                 print(f"  {n} records")
     print(f"wrote {n} records to {out.relative_to(ROOT)}")
+    del model
+    clear_cache(m["hf_id"], a.clear_cache)
+
+
+def clear_cache(hf_id: str, enabled: bool) -> None:
+    if not enabled:
+        return
+    hub = Path(os.environ.get("HF_HUB_CACHE") or
+               Path(os.environ.get("HF_HOME", Path.home() / ".cache" / "huggingface")) / "hub")
+    d = hub / f"models--{hf_id.replace('/', '--')}"
+    # hf_xet keeps a separate chunk cache next to hub/ that can grow to tens of GB
+    xet = hub.parent / "xet"
+    for path in (d, xet):
+        if path.exists():
+            shutil.rmtree(path)
+            print(f"cleared cache {path}")
 
 
 if __name__ == "__main__":
