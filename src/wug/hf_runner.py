@@ -35,7 +35,7 @@ def run_metadata(model, tok, model_key: str, hf_id: str, settings: dict) -> dict
     import transformers
     return dict(
         model_key=model_key, hf_id=hf_id,
-        revision=getattr(model.config, "_commit_hash", None),
+        revision=_revision(model, hf_id),
         run_utc=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         torch=torch.__version__, transformers=transformers.__version__,
         python=platform.python_version(),
@@ -43,6 +43,18 @@ def run_metadata(model, tok, model_key: str, hf_id: str, settings: dict) -> dict
         gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         **settings,
     )
+
+
+def _revision(model, hf_id: str) -> str | None:
+    """Commit hash of the downloaded snapshot (transformers 5 no longer sets _commit_hash)."""
+    rev = getattr(model.config, "_commit_hash", None)
+    if rev:
+        return rev
+    try:
+        from huggingface_hub import model_info
+        return model_info(hf_id).sha
+    except Exception:  # offline or no access: leave it to MODEL_REVISIONS.csv
+        return None
 
 
 def _seed_for(text: str, base_seed: int) -> int:

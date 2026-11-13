@@ -1,0 +1,21 @@
+# API models (method A only: closed models expose no full log-probabilities).
+#
+# Current Claude models reject temperature / top_p / top_k (API version 2026-10-21), so a
+# true greedy run and T=0.7 sampling are not possible. Each prompt is sent n_calls times at
+# the model's default sampling instead; decoding is recorded as "default".
+# Thinking is set to the model's lowest setting (no extended thinking), so that the model
+# answers directly, like the open models and the human participants.
+# The API key is read from the ANTHROPIC_API_KEY environment variable. Never commit it.
+
+defaults:
+  n_calls: 11          # same number of outputs per prompt as the open models (1 greedy + 10)
+  max_tokens: 64
+  max_retries: 5
+
+models:
+  claude-sonnet-5-5:
+    provider: anthropic
+    model_id: claude-sonnet-5-5
+    family: Claude
+    params_b: null     # not disclosed
+    thinking: {type: between_tools}   # lowest setting on Sonnet 5.5: no extended thinking
