@@ -111,6 +111,12 @@ separately and is not included in the published aggregates.
 6. Possible training-data contamination (*Baukje* is a Frisian given name).
 7. Open models up to 12B, all 4-bit quantised; no closed frontier model yet.
 
+## Use of AI tools
+
+The research design, stimuli, human data collection and interpretation of the results are my
+own. I used an AI coding assistant (Claude Code) to help implement and test the analysis
+pipeline. I have reviewed every step and can explain the code and the choices behind it.
+
 ## License
 
 Code: MIT (see [`LICENSE`](LICENSE)). Data and figures: CC BY 4.0.
